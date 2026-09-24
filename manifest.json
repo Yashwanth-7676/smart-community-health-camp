@@ -1,0 +1,24 @@
+{
+  "name": "SmartCare Camp - Smart Community Health Camp Management System",
+  "short_name": "SmartCare",
+  "description": "Offline-friendly fictional community health camp workflow demonstration.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#071a27",
+  "theme_color": "#159ca3",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    { "name": "Dashboard", "url": "./index.html#portalDashboard" },
+    { "name": "Register Patient", "url": "./index.html#portalDashboard" },
+    { "name": "Open Queue", "url": "./index.html#portalDashboard" },
+    { "name": "View Reports", "url": "./index.html#portalDashboard" }
+  ]
+}

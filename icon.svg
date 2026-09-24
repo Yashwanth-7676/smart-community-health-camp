@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">SmartCare Camp</title>
+  <desc id="desc">A teal medical cross inside a navy shield with community circles.</desc>
+  <rect width="512" height="512" rx="112" fill="#071a27"/>
+  <path d="M256 66 406 124v112c0 99-64 165-150 210-86-45-150-111-150-210V124L256 66Z" fill="#159ca3"/>
+  <path d="M224 130h64v88h88v64h-88v88h-64v-88h-88v-64h88v-88Z" fill="#fff"/>
+  <circle cx="148" cy="392" r="30" fill="#39d39a"/>
+  <circle cx="256" cy="392" r="30" fill="#ffbd69"/>
+  <circle cx="364" cy="392" r="30" fill="#39d39a"/>
+  <path d="M148 362v-26m108 26v-26m108 26v-26" stroke="#fff" stroke-width="12" stroke-linecap="round"/>
+</svg>

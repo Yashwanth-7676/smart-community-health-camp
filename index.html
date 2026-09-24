@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="SmartCare Camp community health operations website."
+    />
+    <meta name="theme-color" content="#159ca3" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" href="icon.svg" type="image/svg+xml" />
+    <title>SmartCare Camp</title>
+    <script src="theme-init.js?v=20260920-ai-backend"></script>
+    <link rel="stylesheet" href="styles.css?v=20260920-capabilities" />
+  </head>
+  <body data-theme="light" data-theme-preference="light">
+    <header class="site-header">
+      <a href="#" class="brand" aria-label="SmartCare Camp home">
+        <span class="brand-icon">✚</span>
+        <span>
+          <strong>SmartCare Camp</strong>
+          <small>Community health operations</small>
+        </span>
+      </a>
+
+      <nav class="desktop-nav" aria-label="Main navigation">
+        <a href="#capabilities">Capabilities</a>
+        <a href="#workflow">Workflow</a>
+        <a href="#about">About</a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="theme-switch" id="themeToggle" type="button" aria-label="Change theme">☀️ Theme: Light</button>
+        <button class="lang-switch" id="languageToggle" type="button" aria-label="Toggle language">Kannada</button>
+        <button class="button button-ghost small-button install-button" id="installAppButton" type="button" hidden>Install app</button>
+        <a href="#staff-login" class="button button-ghost">Staff sign in</a>
+        <a href="#staff-login" class="button button-primary">Open portal <span>→</span></a>
+      </div>
+
+      <button class="menu-button" id="menuButton" aria-label="Open menu">☰</button>
+    </header>
+
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="#capabilities">Capabilities</a>
+      <a href="#workflow">Workflow</a>
+      <a href="#about">About</a>
+      <a href="#staff-login">Staff sign in</a>
+      <button class="theme-switch mobile-theme-switch" id="mobileThemeToggle" type="button" aria-label="Change theme">☀️ Theme: Light</button>
+    </div>
+
+    <div class="app-status-bar" id="appStatusBar" role="status" aria-live="polite">
+      <span id="connectionStatus" class="connection-status online"><i></i> Online</span>
+      <span id="syncStatus">Demo data saved locally</span>
+      <button id="syncNowButton" class="text-button" type="button">Sync demo data</button>
+    </div>
+
+    <div id="appStartup" class="app-startup" aria-hidden="true">
+      <div class="startup-mark">✚</div>
+      <p class="eyebrow-text">SmartCare Camp</p>
+      <h2>Organize camps. Improve care.</h2>
+      <div class="startup-loader"><span></span></div>
+      <p id="startupStatus">Loading local demo workspace...</p>
+    </div>
+
+    <section id="appErrorPanel" class="app-error-panel" hidden role="alert" aria-live="assertive">
+      <div class="app-error-card">
+        <p class="eyebrow-text">Demo workspace notice</p>
+        <h2>SmartCare needs a quick refresh</h2>
+        <p id="appErrorMessage">The local demo encountered an unexpected problem. Your fictional data was not sent anywhere.</p>
+        <a id="appErrorRetry" class="button button-primary" href="./index.html?retry=1">Reload workspace</a>
+      </div>
+    </section>
+
+    <main>
+      <section class="hero">
+        <div class="hero-glow hero-glow-one"></div>
+        <div class="hero-glow hero-glow-two"></div>
+
+        <div class="hero-content">
+          <div class="hero-copy">
+            <div class="eyebrow" data-i18n="eyebrowTag">
+              <span>✓</span>
+              Built for organized community care
+            </div>
+
+            <h1 data-i18n="heroTitle">Run every health camp handoff with confidence.</h1>
+
+            <p class="hero-description" data-i18n="heroDescription">
+              SmartCare Camp gives community health teams one clear website for planning camps,
+              coordinating patient flow, recording care, managing medicines, and closing follow-ups.
+            </p>
+            <p class="typewriter-wrap"><span data-i18n="typewriterPrefix">Building</span> <span id="typewriterText" class="typewriter">care coordination</span></p>
+
+            <div class="hero-buttons">
+              <a href="#staff-login" class="button button-primary button-large">
+                Enter staff portal <span>→</span>
+              </a>
+              <button type="button" class="button button-outline button-large" data-poster-open="true">
+                View Health Camp Poster
+              </button>
+            </div>
+
+            <div class="trust-points">
+              <span>✓ Role-aware workspace</span>
+              <span>✓ Connected care workflow</span>
+              <span>✓ Fictional demo data</span>
+            </div>
+          </div>
+
+          <div class="overview-card">
+            <div class="overview-header">
+              <p>SMARTCARE AT A GLANCE</p>
+              <h2>One connected care journey</h2>
+            </div>
+
+            <div class="overview-content">
+              <div class="overview-highlight">
+                <div class="highlight-top">
+                  <div>
+                    <small>Designed for</small>
+                    <strong>Community health camp teams</strong>
+                  </div>
+                  <span class="status-pill">Ready</span>
+                </div>
+
+                <div class="journey-list">
+                  <div class="journey-item">
+                    <span>1</span>
+                    Register with context
+                  </div>
+                  <div class="journey-item">
+                    <span>2</span>
+                    Prioritize the next patient
+                  </div>
+                  <div class="journey-item">
+                    <span>3</span>
+                    Document the outcome
+                  </div>
+                </div>
+              </div>
+
+              <div class="secure-note">
+                <span class="secure-icon">🔒</span>
+                <p>Public information stays separate from the authenticated staff portal.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-muted" id="capabilities">
+        <div class="section-heading">
+          <p class="eyebrow-text" data-i18n="capabilitiesLabel">Capabilities</p>
+          <h2 data-i18n="capabilitiesTitle">A website for the whole camp operation.</h2>
+          <p data-i18n="capabilitiesText">
+            The public website explains the service. The staff portal carries the real work,
+            data, and role-based care workflow behind it.
+          </p>
+        </div>
+
+        <div class="capability-grid">
+          <a class="capability-card capability-link" href="#/registration" aria-label="Open patient registration workspace">
+            <div class="card-icon">👥</div>
+            <h3>Patient registration</h3>
+            <p>Capture essential intake details in one calm workspace.</p>
+            <span class="capability-card-action">Open registration <span aria-hidden="true">→</span></span>
+          </a>
+
+          <a class="capability-card capability-link" href="#/screening" aria-label="Open screening and triage workspace">
+            <div class="card-icon">❤</div>
+            <h3>Screening and triage</h3>
+            <p>Move screening notes and priority handoffs together.</p>
+            <span class="capability-card-action">Open screening <span aria-hidden="true">→</span></span>
+          </a>
+
+          <a class="capability-card capability-link" href="#/queue" aria-label="Open queue coordination workspace">
+            <div class="card-icon">✓</div>
+            <h3>Queue coordination</h3>
+            <p>Give every care team member a clear next step.</p>
+            <span class="capability-card-action">Open queue <span aria-hidden="true">→</span></span>
+          </a>
+
+          <a class="capability-card capability-link" href="#/consultation" aria-label="Open doctor consultation workspace">
+            <div class="card-icon">⚕</div>
+            <h3>Doctor consultation</h3>
+            <p>Keep consultation records connected to the patient journey.</p>
+            <span class="capability-card-action">Open consultation <span aria-hidden="true">→</span></span>
+          </a>
+
+          <a class="capability-card capability-link" href="#/medicines" aria-label="Open pharmacy operations workspace">
+            <div class="card-icon">💊</div>
+            <h3>Pharmacy operations</h3>
+            <p>Track prescriptions, medicines, and stock attention.</p>
+            <span class="capability-card-action">Open pharmacy <span aria-hidden="true">→</span></span>
+          </a>
+
+          <a class="capability-card capability-link" href="#/followups" aria-label="Open reports and follow-up workspace">
+            <div class="card-icon">↗</div>
+            <h3>Reports and follow-up</h3>
+            <p>Close the loop with referrals, follow-ups, and reporting.</p>
+            <span class="capability-card-action">Open reports <span aria-hidden="true">→</span></span>
+          </a>
+        </div>
+      </section>
+
+      <section class="section workflow-section" id="workflow">
+        <div class="workflow-layout">
+          <div class="section-heading">
+            <p class="eyebrow-text">The care workflow</p>
+            <h2>Every handoff has a home.</h2>
+            <p>
+              From the first registration to the last follow-up, each stage is visible,
+              connected, and ready for the next role.
+            </p>
+          </div>
+
+          <div class="workflow-grid">
+            <div class="workflow-item"><span>01</span> Camp planning</div>
+            <div class="workflow-item"><span>02</span> Registration</div>
+            <div class="workflow-item"><span>03</span> QR health pass</div>
+            <div class="workflow-item"><span>04</span> Queue</div>
+            <div class="workflow-item"><span>05</span> Screening</div>
+            <div class="workflow-item"><span>06</span> Triage</div>
+            <div class="workflow-item"><span>07</span> Consultation</div>
+            <div class="workflow-item"><span>08</span> Pharmacy</div>
+            <div class="workflow-item"><span>09</span> Referral</div>
+            <div class="workflow-item"><span>10</span> Follow-up</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="dark-section" id="about">
+        <div class="dark-layout">
+          <div>
+            <p class="eyebrow-text">A clearer way to coordinate</p>
+            <h2>Calm systems make room for better care.</h2>
+          </div>
+
+          <div class="dark-copy">
+            <p>
+              <strong>For organizers.</strong>
+              See camp activity, queues, referrals, and follow-ups without chasing updates across
+              separate tools.
+            </p>
+
+            <p>
+              <strong>For care teams.</strong>
+              Keep the next action visible while preserving the context needed for a respectful
+              patient journey.
+            </p>
+          </div>
+
+          <div class="dark-copy">
+            <p>
+              <strong>For students.</strong>
+              Learn how a community care operation works with a safe, fictional dataset.
+            </p>
+
+            <p>
+              <strong>For every visitor.</strong>
+              Public information stays simple, while operational data remains behind staff sign-in.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="cta-card" id="staff-login">
+          <div>
+            <p class="eyebrow-text">Ready to coordinate?</p>
+            <h2>Open the SmartCare staff portal.</h2>
+            <p>
+              Sign in to access the workspace for camps, visits, medicines, reports, and care
+              coordination.
+            </p>
+          </div>
+
+          <button class="button button-primary button-large" id="portalButton">
+            Open staff portal <span>→</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="section upcoming-camp-section reveal" id="upcomingCampSection">
+        <div class="section-heading narrow">
+          <p class="eyebrow-text">Upcoming Community Health Camp</p>
+          <h2>FREE COMMUNITY HEALTH CAMP</h2>
+        </div>
+
+        <div class="upcoming-camp-card">
+          <div class="upcoming-camp-copy">
+            <span class="announcement-badge">Health camp announcement</span>
+            <p class="upcoming-date">Sunday, 27 September 2026</p>
+            <h3>SmartCare Camp Community Health Initiative</h3>
+            <p>
+              Your health matters. Join us for a free community health check-up camp with screening,
+              awareness guidance, and referral support designed for families and local residents.
+            </p>
+            <div class="upcoming-meta">
+              <span>📍 Community Hall, Bengaluru</span>
+              <span>⏰ 9:00 AM to 3:00 PM</span>
+            </div>
+            <div class="upcoming-actions">
+              <button class="button button-primary" type="button" data-camp-register="true">Register for Camp</button>
+              <button class="button button-outline" type="button" data-poster-open="true">View Poster</button>
+            </div>
+          </div>
+          <div class="upcoming-camp-visual" aria-hidden="true">
+            <div class="camp-visual-symbol">✚</div>
+            <div class="visual-pill">Free Entry</div>
+            <div class="visual-pill soft">Community Focus</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section showcase-section reveal">
+        <div class="section-heading narrow">
+          <p class="eyebrow-text" data-i18n="showcaseLabel">Smart features</p>
+          <h2 data-i18n="showcaseHeading">Modern tools for every health campaign.</h2>
+        </div>
+
+        <div class="toolbar">
+          <input id="searchInput" type="text" placeholder="Search features..." aria-label="Search features" />
+          <div class="filter-tags">
+            <button class="tag active" data-filter="all" type="button">All</button>
+            <button class="tag" data-filter="analytics" type="button">Analytics</button>
+            <button class="tag" data-filter="operations" type="button">Operations</button>
+            <button class="tag" data-filter="care" type="button">Patient care</button>
+          </div>
+        </div>
+
+        <div class="showcase-grid">
+          <article class="showcase-card" data-category="operations">
+            <span class="feature-badge">Operations</span>
+            <h3>Queue flow board</h3>
+            <p>Keep patient intake, consultation, medicine, and follow-up synchronized.</p>
+          </article>
+          <article class="showcase-card" data-category="care">
+            <span class="feature-badge">Patient care</span>
+            <h3>Care plan snapshot</h3>
+            <p>Summarize the most recent patient and referral milestones for staff.</p>
+          </article>
+          <article class="showcase-card" data-category="analytics">
+            <span class="feature-badge">Analytics</span>
+            <h3>Camp performance view</h3>
+            <p>Review daily figures, screenings, and referral progress in one glance.</p>
+          </article>
+          <article class="showcase-card" data-category="operations">
+            <span class="feature-badge">Operations</span>
+            <h3>Medication tracking</h3>
+            <p>Monitor medicine distribution, follow-up care, and stock readiness.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section stats-section reveal">
+        <div class="section-heading narrow">
+          <p class="eyebrow-text">Impact</p>
+          <h2>Measured care, stronger communities.</h2>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card"><span class="stat-number" data-target="500">0</span><span class="stat-label">Patients served</span></div>
+          <div class="stat-card"><span class="stat-number" data-target="98">0</span><span class="stat-label">Satisfaction rate</span></div>
+          <div class="stat-card"><span class="stat-number" data-target="180">0</span><span class="stat-label">Referrals closed</span></div>
+          <div class="stat-card"><span class="stat-number" data-target="36">0</span><span class="stat-label">Camp partners</span></div>
+        </div>
+      </section>
+
+      <section class="section gallery-section reveal">
+        <div class="section-heading narrow">
+          <p class="eyebrow-text">Camp highlights</p>
+          <h2>Visual moments from the care journey.</h2>
+        </div>
+
+        <div class="carousel" aria-live="polite">
+          <button class="carousel-btn prev" type="button" aria-label="Previous slide">‹</button>
+          <div class="carousel-viewport">
+            <div class="carousel-track">
+              <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1200&q=80" alt="Doctors at a community clinic" />
+              <img src="https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&w=1200&q=80" alt="Medical consultation" />
+              <img src="https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=1200&q=80" alt="Community care" />
+            </div>
+          </div>
+          <button class="carousel-btn next" type="button" aria-label="Next slide">›</button>
+        </div>
+
+        <div class="carousel-dots" aria-label="Carousel indicators">
+          <button class="dot active" type="button" aria-label="Slide 1"></button>
+          <button class="dot" type="button" aria-label="Slide 2"></button>
+          <button class="dot" type="button" aria-label="Slide 3"></button>
+        </div>
+
+        <div class="gallery-grid">
+          <button class="gallery-item" type="button" data-full-image="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1200&q=80">
+            <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=900&q=80" alt="Community care" />
+          </button>
+          <button class="gallery-item" type="button" data-full-image="https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&w=1200&q=80">
+            <img src="https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&w=900&q=80" alt="Health camp support" />
+          </button>
+          <button class="gallery-item" type="button" data-full-image="https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=1200&q=80">
+            <img src="https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=900&q=80" alt="Care coordination" />
+          </button>
+        </div>
+      </section>
+
+      <section class="section faq-section reveal">
+        <div class="section-heading narrow">
+          <p class="eyebrow-text">FAQ</p>
+          <h2>Frequently asked questions.</h2>
+        </div>
+
+        <div class="faq-list">
+          <div class="faq-item active">
+            <button class="faq-question" type="button">How does SmartCare keep patient records organized?</button>
+            <div class="faq-answer"><p>Each patient gets a unique ID, a QR pass, and a linked history across screening, consultation, medicine, referral, and follow-up stages.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question" type="button">Can staff scan QR codes from a phone image?</button>
+            <div class="faq-answer"><p>Yes. The scanner accepts direct QR payload input or uploaded QR image files for fast patient retrieval.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question" type="button">Is the portal compatible with mobile screens?</button>
+            <div class="faq-answer"><p>Yes. The layout is responsive and adapts to mobile, tablet, and desktop screens without breaking the workflow.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section contact-section reveal">
+        <div class="contact-layout">
+          <div class="contact-copy">
+            <p class="eyebrow-text">Live tools</p>
+            <h2>Quick updates and contact.</h2>
+            <div class="quote-widget">
+              <p class="quote-label">Daily inspiration</p>
+              <blockquote id="quoteText">Loading quote...</blockquote>
+              <span id="quoteAuthor">— SmartCare</span>
+            </div>
+          </div>
+
+          <form id="contactForm" class="contact-form" novalidate>
+            <label>
+              Name
+              <input type="text" id="contactName" name="name" placeholder="Your name" />
+            </label>
+            <label>
+              Email
+              <input type="email" id="contactEmail" name="email" placeholder="you@example.com" />
+            </label>
+            <label>
+              Message
+              <textarea id="contactMessage" name="message" rows="4" placeholder="Write your message"></textarea>
+            </label>
+            <button class="button button-primary" type="submit">Send message</button>
+          </form>
+        </div>
+      </section>
+
+    <section class="portal-dashboard" id="portalDashboard" aria-live="polite">
+      <div class="portal-header">
+        <div>
+          <p class="eyebrow-text" id="portalBreadcrumb">Authorized staff workspace</p>
+          <h2 id="portalPageTitle" tabindex="-1">Digital Health Camp Operations</h2>
+          <div id="portalUserLabel" class="portal-user-badge">Guest access</div>
+        </div>
+        <div class="portal-actions">
+          <div class="portal-tabs" role="tablist" aria-label="Portal sections">
+            <button class="tab-button active" type="button" data-tab="dashboard-panel">Dashboard</button>
+            <button class="tab-button" type="button" data-tab="workflow-panel">Workflow</button>
+            <button class="tab-button" type="button" data-tab="register-panel">Register Patient</button>
+            <button class="tab-button" type="button" data-tab="queue-panel">Queue</button>
+            <button class="tab-button" type="button" data-tab="scanner-panel">QR Scanner</button>
+            <button class="tab-button" type="button" data-tab="pharmacy-panel">Pharmacy</button>
+            <button class="tab-button" type="button" data-tab="reports-panel">Reports</button>
+            <button class="tab-button" type="button" data-tab="settings-panel">Settings</button>
+            <button class="tab-button" type="button" data-tab="profile-panel">Profile</button>
+            <button class="tab-button" type="button" data-tab="ai-panel">Yash AI</button>
+          </div>
+          <button id="logoutButton" class="button button-ghost small-button" type="button">Logout</button>
+        </div>
+      </div>
+
+      <div class="portal-panels">
+        <div class="portal-panel active" id="dashboard-panel">
+          <div class="demo-mode-banner"><strong>DEMO MODE</strong><span>Fictional records are stored in this browser only. Do not use real health information.</span></div>
+          <div class="dashboard-action-row">
+            <button id="continueWorkflowButton" class="button button-primary small-button" type="button">Continue Workflow</button>
+            <button id="resumeLastActivityButton" class="button button-ghost small-button" type="button">Resume Last Activity</button>
+            <button id="presentationModeButton" class="button button-outline small-button" type="button">Presentation Mode</button>
+            <div id="recommendedActionBanner" class="recommended-action-banner" aria-live="polite">Register your first patient.</div>
+          </div>
+          <div class="dashboard-summary-grid" id="dashboardSummaryGrid"></div>
+          <div class="panel-card yash-ai-summary-card">
+            <div class="panel-header"><div><p class="eyebrow-text">YASH AI</p><h3>Your Smart Community Health Camp Assistant</h3></div><span id="dashboardAiStatus" class="status-badge success">Demo Mode</span></div>
+            <p>Get a fictional, aggregate-only operational summary with clear next steps for the camp team.</p>
+            <div class="yash-ai-summary-actions"><button id="dashboardAskAiButton" class="button button-primary small-button" type="button">Ask Yash AI</button><button id="dashboardSummarizeAiButton" class="button button-outline small-button" type="button">Summarize camp</button></div>
+          </div>
+          <div class="panel-card role-dashboard-card">
+            <div class="panel-header"><div><p class="eyebrow-text">Role-aware workspace</p><h3 id="roleDashboardTitle">Operations overview</h3></div><span class="status-badge success" id="roleAccessBadge">Local demo access</span></div>
+            <div id="roleDashboardContent" class="role-dashboard-content"></div>
+          </div>
+        </div>
+
+        <div class="portal-panel" id="presentation-panel">
+          <div class="panel-card presentation-card">
+            <div class="panel-header"><div><p class="eyebrow-text">Competition presentation</p><h3 id="presentationTitle">The problem</h3></div><span class="status-badge success" id="presentationProgress">1 of 20</span></div>
+            <div class="presentation-progress"><span id="presentationProgressBar"></span></div>
+            <div class="presentation-stage"><p id="presentationBody">Community health camps need a clear, affordable way to coordinate people, queues, records, and follow-up care.</p><div class="presentation-note"><strong>Presenter note</strong><span id="presentationNote">Open by describing the community problem, not the technology.</span></div></div>
+            <div class="presentation-actions"><button id="presentationPreviousButton" class="button button-ghost" type="button">Previous</button><button id="presentationNextButton" class="button button-primary" type="button">Next</button><button id="presentationResetButton" class="button button-outline" type="button">Reset demo</button><button id="presentationFullscreenButton" class="button button-ghost" type="button">Full screen</button><button id="presentationExitButton" class="button button-ghost" type="button">Exit</button></div>
+          </div>
+        </div>
+
+        <div class="portal-panel" id="workflow-panel">
+          <div class="panel-card workflow-app-card">
+            <div class="panel-header"><div><p class="eyebrow-text">Guided application workflow</p><h3>Complete a camp visit step by step</h3></div><span class="status-badge success" id="workflowProgressLabel">0 of 15 complete</span></div>
+            <div class="workflow-progress-track"><span id="workflowProgressBar"></span></div>
+            <div class="workflow-layout-app">
+              <nav class="workflow-step-list" id="workflowStepList" aria-label="Workflow steps"></nav>
+              <section class="workflow-step-detail" aria-live="polite"><span id="workflowStepNumber" class="workflow-step-number">Step 1</span><h3 id="workflowStepTitle">Create or select camp</h3><p id="workflowStepDescription">Start with a fictional camp record and choose the current event for this demonstration.</p><div class="workflow-data-note" id="workflowDataNote">No demo record created for this step yet.</div><div class="workflow-actions"><button id="workflowBackButton" class="button button-ghost" type="button">Back</button><button id="workflowDraftButton" class="button button-outline" type="button">Save draft</button><button id="workflowNextButton" class="button button-primary" type="button">Complete step</button></div><button id="resumeWorkflowButton" class="text-button" type="button">Resume last workflow state</button></section>
+            </div>
+          </div>
+        </div>
+
+        <div class="portal-panel" id="register-panel">
+          <div class="panel-card">
+            <div class="panel-header">
+              <h3>New patient registration</h3>
+              <span class="status-badge success">Live patient database</span>
+            </div>
+
+            <form id="patientRegistrationForm" class="patient-form">
+              <div class="field-grid">
+                <label>
+                  Full name
+                  <input id="patientName" name="name" type="text" placeholder="Enter full name" required />
+                </label>
+
+                <label>
+                  Patient age
+                  <input id="patientAge" name="age" type="number" min="1" max="120" placeholder="Age" required />
+                </label>
+
+                <label>
+                  Gender
+                  <select id="patientGender" name="gender" required>
+                    <option value="">Select gender</option>
+                    <option value="Female">Female</option>
+                    <option value="Male">Male</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </label>
+
+                <label>
+                  Camp name
+                  <input id="campName" name="campName" type="text" value="Smart Community Health Camp 2026" required />
+                </label>
+              </div>
+
+              <button class="button button-primary" type="submit">Register patient</button>
+            </form>
+          </div>
+
+          <div class="panel-card">
+            <div class="panel-header">
+              <h3>Recent patient registrations</h3>
+            </div>
+            <div id="recentPatientsList" class="patient-list"></div>
+          </div>
+        </div>
+
+        <div class="portal-panel" id="scanner-panel">
+          <div class="panel-card scanner-card">
+            <div class="panel-header">
+              <h3>QR scanner</h3>
+              <span class="status-badge neutral">Authorized staff only</span>
+            </div>
+
+            <div class="scanner-layout">
+              <div class="scanner-controls">
+                <label for="scannerInput">Patient QR / Patient ID</label>
+                <input id="scannerInput" type="text" placeholder="Paste QR payload or Patient ID" />
+
+                <div class="scanner-actions">
+                  <button id="scanQrButton" class="button button-primary" type="button">Scan QR</button>
+                  <label class="upload-button" for="qrImageInput">Upload QR image</label>
+                  <input id="qrImageInput" type="file" accept="image/*" hidden />
+                </div>
+
+                <div id="scannerStatus" class="scanner-status idle">Awaiting QR input.</div>
+              </div>
+
+              <div class="patient-profile-card" id="patientProfileCard">
+                <p class="eyebrow-text">Patient details</p>
+                <div id="patientProfileContent" class="empty-state">No patient loaded yet.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="portal-panel" id="queue-panel">
+          <div class="panel-card">
+            <div class="panel-header"><div><p class="eyebrow-text">Registration workflow</p><h3>Queue management</h3></div><span class="status-badge neutral" id="queueCountBadge">0 waiting</span></div>
+            <div class="queue-toolbar"><input id="queueSearchInput" type="search" placeholder="Search patient or token" aria-label="Search queue" /><button id="callNextButton" class="button button-primary" type="button">Call next</button></div>
+            <div id="queueList" class="queue-list"></div>
+          </div>
+        </div>
+
+        <div class="portal-panel" id="pharmacy-panel">
+          <div class="panel-card">
+            <div class="panel-header"><div><p class="eyebrow-text">Medicine operations</p><h3>Inventory and dispensing</h3></div><button id="resetDemoDataButton" class="button button-ghost small-button" type="button">Reset demo data</button></div>
+            <div id="inventoryAlerts" class="inventory-alerts"></div>
+            <div class="inventory-form-row"><input id="medicineNameInput" type="text" placeholder="Medicine name" aria-label="Medicine name" /><input id="medicineQuantityInput" type="number" min="1" placeholder="Quantity" aria-label="Medicine quantity" /><button id="addMedicineButton" class="button button-primary" type="button">Add stock</button></div>
+            <div id="medicineList" class="medicine-list"></div>
+          </div>
+        </div>
+
+        <div class="portal-panel" id="reports-panel">
+          <div class="panel-card">
+            <div class="panel-header"><div><p class="eyebrow-text">Aggregate insights</p><h3>Camp operations report</h3></div><button id="exportReportButton" class="button button-outline small-button" type="button">Export CSV</button></div>
+            <p class="medical-notice">These are aggregate operational insights, not medical diagnoses.</p>
+            <div id="reportSummary" class="report-summary-grid"></div>
+            <div class="report-bars" id="reportBars"></div>
+          </div>
+        </div>
+
+        <div class="portal-panel" id="settings-panel">
+          <div class="panel-card settings-card">
+            <div class="panel-header"><div><p class="eyebrow-text">Workspace preferences</p><h3>Settings and data controls</h3></div><span class="status-badge warning">Prototype only</span></div>
+            <label class="setting-row"><span><strong>Theme mode</strong><small>Your theme preference is saved on this device.</small></span><select id="themePreferenceSelect" aria-label="Theme mode"><option value="light">☀️ Light</option><option value="dark">🌙 Dark</option><option value="system">🖥 System</option></select></label>
+            <div class="theme-preview-grid"><button type="button" class="theme-preview light-preview" data-theme-choice="light"><strong>Light</strong><span>Bright, calm surfaces</span></button><button type="button" class="theme-preview dark-preview" data-theme-choice="dark"><strong>Dark</strong><span>Deep navy surfaces</span></button><button type="button" class="theme-preview system-preview" data-theme-choice="system"><strong>System</strong><span>Follows your device</span></button></div>
+            <label class="setting-row"><span><strong>Reduce motion</strong><small>Use simpler transitions throughout the demo.</small></span><input id="reduceMotionToggle" type="checkbox" /></label>
+            <label class="setting-row"><span><strong>High contrast</strong><small>Increase borders and text contrast for readability.</small></span><input id="highContrastToggle" type="checkbox" /></label>
+            <label class="setting-row"><span><strong>Large text</strong><small>Increase interface text size on this device.</small></span><input id="largeTextToggle" type="checkbox" /></label>
+            <div class="privacy-notice"><strong>Educational demonstration system.</strong><p>Use fictional data only. This software does not provide medical diagnosis or replace qualified healthcare professionals. localStorage is not suitable for real health records.</p></div>
+            <div class="settings-actions"><button id="exportDataButton" class="button button-outline" type="button">Export demo data</button><button id="resetAllDataButton" class="button button-ghost" type="button">Reset local data</button></div>
+          </div>
+        </div>
+
+        <div class="portal-panel" id="profile-panel">
+          <div class="panel-card profile-panel-card">
+            <div class="profile-identity"><div id="profileAvatar" class="profile-avatar">SC</div><div><p class="eyebrow-text">Authenticated demo profile</p><h3 id="profileName">Staff profile</h3><span id="profileRole" class="status-badge success">Staff</span></div></div>
+            <div class="profile-detail-grid"><div><span>Email</span><strong id="profileEmail">Not signed in</strong></div><div><span>Access</span><strong>Protected local portal</strong></div><div><span>Storage</span><strong>Browser localStorage</strong></div><div><span>Data mode</span><strong>Fictional demonstration</strong></div></div>
+            <p class="medical-notice">This profile is for the college-project demonstration only. Never enter real patient information.</p>
+          </div>
+        </div>
+
+        <div class="portal-panel" id="ai-panel">
+          <div class="panel-card ai-panel-card">
+            <div class="yash-ai-header"><div class="yash-ai-mark" aria-hidden="true">✦</div><div><p class="eyebrow-text">YASH AI</p><h3>Your Smart Community Health Camp Assistant</h3><span id="yashAiStatus" class="yash-ai-status">● Demo Mode · Local fallback · No API key</span></div><button id="aiNewConversationButton" class="button button-ghost small-button" type="button">New conversation</button></div>
+            <div class="ai-safety-banner"><strong>Yash AI provides administrative and educational assistance only.</strong><span>It does not diagnose, prescribe, or replace qualified healthcare professionals.</span></div>
+            <div class="ai-chat" id="aiChat" aria-live="polite"><div class="ai-message assistant"><strong>Yash AI</strong><p>I can summarize fictional operations, explain aggregate trends, draft education content, and guide this workflow. I cannot diagnose or prescribe.</p><time>Now</time></div></div>
+            <div class="ai-prompt-chips"><button type="button" class="ai-prompt-chip" data-ai-prompt="Summarize today’s camp operations.">Summarize camp</button><button type="button" class="ai-prompt-chip" data-ai-prompt="Which departments have the longest queue?">Explain queue</button><button type="button" class="ai-prompt-chip" data-ai-prompt="Create a camp-end report summary.">Draft report</button><button type="button" class="ai-prompt-chip" data-ai-prompt="Create a camp-readiness checklist.">Plan camp</button><button type="button" class="ai-prompt-chip" data-ai-prompt="Find incomplete demo records.">Review data quality</button><button type="button" class="ai-prompt-chip" data-ai-prompt="Create a volunteer briefing.">Brief volunteers</button><button type="button" class="ai-prompt-chip" data-ai-prompt="Translate this camp announcement into Kannada.">Translate</button><button type="button" class="ai-prompt-chip" data-ai-prompt="Prepare my college viva answer.">Viva support</button><button type="button" class="ai-prompt-chip" data-ai-prompt="Diagnose this patient.">Test safety refusal</button></div>
+            <div class="ai-input-row"><textarea id="aiPromptInput" rows="2" placeholder="Ask about fictional operations or educational content..." aria-label="Yash AI prompt"></textarea><button id="aiAskButton" class="button button-primary" type="button">Ask Yash AI</button></div>
+            <div class="ai-actions"><button id="aiClearButton" class="button button-ghost small-button" type="button">Clear chat</button><button id="aiCopyButton" class="button button-outline small-button" type="button">Copy latest</button><button id="aiExportButton" class="button button-outline small-button" type="button">Export chat</button><button id="aiPrintButton" class="button button-ghost small-button" type="button">Print</button><button id="aiReviewedButton" class="button button-ghost small-button" type="button">Mark reviewed</button></div>
+          </div>
+          <div class="panel-card ai-safety-card"><div class="panel-header"><div><p class="eyebrow-text">AI safety center</p><h3>Data boundaries and review</h3></div><span class="status-badge warning">Human review required</span></div><div class="ai-boundary-grid"><div><strong>Included</strong><span>Aggregate counts, queue totals, stock totals, workflow status, and fictional education prompts.</span></div><div><strong>Excluded</strong><span>Names, phone numbers, addresses, diagnoses, prescriptions, histories, and identifiable test results.</span></div><div><strong>Provider status</strong><span id="aiProviderStatus">Checking the local secure AI service…</span></div><div><strong>Audit</strong><span id="aiAuditSummary">No Yash AI requests recorded.</span></div></div></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <section class="section future-scope-section" id="future-scope">
+    <div class="section-heading narrow">
+      <p class="eyebrow-text">Future scope</p>
+      <h2>Planned enhancements after Version 1</h2>
+    </div>
+
+    <div class="future-scope-grid">
+      <div class="future-scope-card"><strong>Secure backend</strong><span>Real authentication and database-backed patient workflows.</span></div>
+      <div class="future-scope-card"><strong>Cloud sync</strong><span>Offline synchronization and multi-device data updates.</span></div>
+      <div class="future-scope-card"><strong>SMS and WhatsApp</strong><span>Patient reminders and operational communication channels.</span></div>
+      <div class="future-scope-card"><strong>AI admin assistant</strong><span>Demo AI workflow support only, with human review required.</span></div>
+      <div class="future-scope-card"><strong>Government integration</strong><span>External reporting or interoperability with health systems.</span></div>
+      <div class="future-scope-card"><strong>Mobile app</strong><span>Native app support, push notifications, and offline-first tools.</span></div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <p>© 2026 SmartCare Camp</p>
+    <p>Community health operations · Fictional educational data only</p>
+    <p>Educational demonstration system. Use fictional data only. This software does not provide medical diagnosis or replace qualified healthcare professionals.</p>
+  </footer>
+
+  <div id="lightbox" class="lightbox" aria-hidden="true">
+    <button class="lightbox-close" type="button" aria-label="Close lightbox">×</button>
+    <img id="lightboxImage" src="" alt="Expanded gallery view" />
+  </div>
+
+  <div id="toast" class="toast" aria-live="polite"></div>
+
+  <div class="cookie-banner" id="cookieBanner" role="dialog" aria-label="Cookie consent">
+    <div>
+      <strong>This site uses cookies.</strong>
+      <p>We use cookies to remember your theme and preferences.</p>
+    </div>
+    <div class="cookie-actions">
+      <button class="button button-primary" type="button" data-cookie="accept">Accept</button>
+      <button class="button button-ghost" type="button" data-cookie="decline">Decline</button>
+    </div>
+  </div>
+
+  <button id="backToTop" class="back-to-top" type="button" aria-label="Back to top">↑</button>
+  <div class="reading-progress" id="readingProgress" aria-hidden="true"></div>
+
+  <div id="campPosterModal" class="poster-modal-backdrop" aria-hidden="true">
+    <div class="poster-modal" role="dialog" aria-modal="true" aria-labelledby="campPosterTitle">
+      <button class="poster-close" type="button" aria-label="Close health camp poster">×</button>
+      <div class="poster-shell">
+        <header class="poster-header">
+          <div class="poster-brand-mark">✚</div>
+          <div class="poster-brand-copy">
+            <span class="poster-tag">SmartCare Camp</span>
+            <strong>Community Health Initiative</strong>
+          </div>
+        </header>
+
+        <section class="poster-hero-row">
+          <div class="poster-hero-copy">
+            <p class="poster-kicker">FREE COMMUNITY HEALTH CAMP</p>
+            <h2 id="campPosterTitle">FREE COMMUNITY HEALTH CAMP</h2>
+            <p class="poster-subtitle">SmartCare Camp Community Health Initiative</p>
+            <p class="poster-message">“Your health matters. Join us for a free community health check-up camp.”</p>
+          </div>
+          <div class="poster-illustration" aria-hidden="true">
+            <div class="medical-cross">✚</div>
+            <div class="doctor-badge">❤</div>
+            <div class="shape shape-one"></div>
+            <div class="shape shape-two"></div>
+          </div>
+        </section>
+
+        <section class="poster-detail-grid">
+          <article class="poster-detail-card">
+            <span class="poster-detail-icon">📅</span>
+            <div>
+              <label>Date</label>
+              <strong>Sunday, 27 September 2026</strong>
+            </div>
+          </article>
+          <article class="poster-detail-card">
+            <span class="poster-detail-icon">⏰</span>
+            <div>
+              <label>Time</label>
+              <strong>9:00 AM to 3:00 PM</strong>
+            </div>
+          </article>
+          <article class="poster-detail-card">
+            <span class="poster-detail-icon">📍</span>
+            <div>
+              <label>Venue</label>
+              <strong>Community Hall, Bengaluru</strong>
+            </div>
+          </article>
+          <article class="poster-detail-card warning">
+            <span class="poster-detail-icon">⚠️</span>
+            <div>
+              <label>Entry</label>
+              <strong>Free</strong>
+            </div>
+          </article>
+        </section>
+
+        <section class="poster-services-row">
+          <div>
+            <p class="poster-section-label">Services available</p>
+            <ul class="poster-services-list">
+              <li>General health check-up</li>
+              <li>Blood pressure screening</li>
+              <li>Blood sugar screening</li>
+              <li>Basic health consultation</li>
+              <li>BMI and weight check</li>
+              <li>Health awareness guidance</li>
+              <li>Medicine guidance</li>
+              <li>Referral support when required</li>
+            </ul>
+          </div>
+
+          <div>
+            <p class="poster-section-label">Target participants</p>
+            <ul class="poster-services-list alt-list">
+              <li>Children</li>
+              <li>Students</li>
+              <li>Adults</li>
+              <li>Senior citizens</li>
+              <li>Families from the local community</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="poster-bottom-row">
+          <div class="poster-info-box">
+            <p class="poster-section-label">Organized by</p>
+            <strong>SmartCare Camp Community Project</strong>
+            <p>Educational community-health project. This demonstration does not replace professional medical care.</p>
+          </div>
+          <div class="poster-info-box accent-box">
+            <p class="poster-section-label">Call to action</p>
+            <strong>Register now and receive your queue token.</strong>
+            <div class="poster-contact">
+              <span>📞 +91 90000 12345</span>
+              <span>✉️ smartcare.demo@example.com</span>
+            </div>
+          </div>
+        </section>
+
+        <div class="poster-action-row">
+          <button class="button button-primary" type="button" data-camp-register="true">Register for Camp</button>
+          <button class="button button-ghost" type="button" id="printPosterButton">Print Poster</button>
+          <label class="poster-checkbox">
+            <input id="posterDoNotShowAgain" type="checkbox" />
+            <span>Do not show again today</span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="campRegistrationModal" class="poster-modal-backdrop" aria-hidden="true">
+    <div class="registration-modal" role="dialog" aria-modal="true" aria-labelledby="registrationTitle">
+      <button class="poster-close registration-close" type="button" aria-label="Close registration dialog">×</button>
+      <div class="registration-header">
+        <div class="poster-brand-mark small-mark">✚</div>
+        <div>
+          <p class="eyebrow-text">CAMP REGISTRATION</p>
+          <h2 id="registrationTitle">Register for the health camp</h2>
+          <p class="registration-note">Enter fictional demo details to receive a sample queue token.</p>
+        </div>
+      </div>
+
+      <form id="campRegistrationForm" class="camp-registration-form" autocomplete="off" novalidate>
+        <div class="registration-grid">
+          <label>
+            Full name *
+            <input type="text" id="campFullName" name="fullName" placeholder="Enter full name" autocomplete="off" required />
+          </label>
+          <label>
+            Age *
+            <input type="number" id="campAge" name="age" min="1" max="120" placeholder="Age" autocomplete="off" required />
+          </label>
+          <label>
+            Gender *
+            <select id="campGender" name="gender" autocomplete="off" required>
+              <option value="">Select gender</option>
+              <option value="Female">Female</option>
+              <option value="Male">Male</option>
+              <option value="Other">Other</option>
+            </select>
+          </label>
+          <label>
+            Phone number *
+            <input type="tel" id="campPhone" name="phone" placeholder="+91 90000 12345" autocomplete="off" required />
+          </label>
+          <label>
+            Address / locality *
+            <input type="text" id="campAddress" name="address" placeholder="Locality" autocomplete="off" required />
+          </label>
+          <label>
+            Preferred department *
+            <select id="campDepartment" name="department" autocomplete="off" required>
+              <option value="">Select department</option>
+              <option value="General Check-up">General Check-up</option>
+              <option value="Blood Pressure">Blood Pressure</option>
+              <option value="Blood Sugar">Blood Sugar</option>
+              <option value="Consultation">Consultation</option>
+              <option value="BMI & Weight">BMI & Weight</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="registration-note">Use fictional demo details only.</div>
+
+        <label class="consent-box">
+          <input type="checkbox" id="campConsent" name="consent" required />
+          <span>
+            I confirm this is a demo registration for a fictional community-health event.
+            <span class="helper-note">This prototype uses fictional data only and is not intended for real patient records.</span>
+          </span>
+        </label>
+
+        <button class="button button-primary full-width" type="submit">Submit registration</button>
+      </form>
+
+      <div id="campRegistrationStatus" class="camp-registration-status" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="loginModal" aria-hidden="true">
+    <div class="login-modal" role="dialog" aria-modal="true" aria-labelledby="portalTitle">
+      <button class="modal-close" id="closeModal" aria-label="Close">×</button>
+      <div class="modal-icon">✚</div>
+      <p class="eyebrow-text">Staff access</p>
+      <h2 id="portalTitle">SmartCare portal</h2>
+      <p class="modal-description">
+        Sign in to your account or create a staff profile to access patient records, QR passes, and camp tools.
+      </p>
+      <div class="demo-login-warning">These accounts are for local educational demonstration only. Do not use real patient information.</div>
+
+      <div class="auth-switcher" role="tablist" aria-label="Authentication mode">
+        <button class="auth-switch active" type="button" data-auth-view="login">Login</button>
+        <button class="auth-switch" type="button" data-auth-view="signup">Create account</button>
+      </div>
+
+      <form id="loginForm" class="auth-form active">
+        <label for="email">Staff email</label>
+        <input id="email" type="email" placeholder="name@example.com" required />
+
+        <label for="password">Password</label>
+        <div class="password-field"><input id="password" type="password" placeholder="Enter password" required /><button type="button" class="password-toggle" data-password-target="password" aria-label="Show password">Show</button></div>
+
+        <button type="button" class="text-button" id="forgotPasswordButton">Forgot password?</button>
+
+        <button class="button button-primary full-width" type="submit">
+          Continue to portal
+        </button>
+      </form>
+
+      <form id="signupForm" class="auth-form">
+        <label for="signupName">Full name</label>
+        <input id="signupName" type="text" placeholder="Your full name" required />
+
+        <label for="signupEmail">Email</label>
+        <input id="signupEmail" type="email" placeholder="name@example.com" required />
+
+        <label for="signupPassword">Password</label>
+        <div class="password-field"><input id="signupPassword" type="password" placeholder="Create a password" required /><button type="button" class="password-toggle" data-password-target="signupPassword" aria-label="Show password">Show</button></div>
+
+        <label for="signupConfirmPassword">Confirm password</label>
+        <div class="password-field"><input id="signupConfirmPassword" type="password" placeholder="Confirm password" required /><button type="button" class="password-toggle" data-password-target="signupConfirmPassword" aria-label="Show password">Show</button></div>
+
+        <button class="button button-primary full-width" type="submit">
+          Create account
+        </button>
+      </form>
+
+      <form id="forgotPasswordForm" class="auth-form">
+        <label for="forgotEmail">Account email</label>
+        <input id="forgotEmail" type="email" placeholder="name@example.com" required />
+        <button class="button button-primary full-width" type="submit">Simulate reset email</button>
+        <button type="button" class="text-button" id="backToLoginButton">Back to login</button>
+      </form>
+
+      <p class="demo-note">Your staff account and patient records stay in this browser storage for later use.</p>
+    </div>
+  </div>
+
+  <div id="qrPassModal" class="qr-pass-modal" aria-hidden="true">
+    <div class="qr-pass-card">
+      <button id="closeQrPass" class="modal-close" aria-label="Close QR pass">×</button>
+      <div class="qr-pass-header">
+        <div>
+          <p class="eyebrow-text">Digital Health Camp QR Pass</p>
+          <h3 id="qrPassName">Patient Name</h3>
+        </div>
+      </div>
+
+      <div id="qrPassContent" class="qr-pass-content"></div>
+    </div>
+  </div>
+
+  <button id="aiAssistButton" class="ai-assist-button" type="button" aria-label="Ask Yash AI" title="Ask Yash AI">✦ <span>Yash AI</span></button>
+
+  <aside id="floatingAiPanel" class="floating-ai-panel" aria-hidden="true" aria-labelledby="floatingAiTitle">
+    <header class="floating-ai-header">
+      <div class="floating-ai-identity"><span class="floating-ai-icon" aria-hidden="true">✦</span><div><strong id="floatingAiTitle">Yash AI</strong><span id="floatingAiSubtitle">Your Smart Community Health Camp Assistant</span></div></div>
+      <div class="floating-ai-header-actions"><span id="floatingAiBadge" class="floating-ai-badge">Demo Mode</span><button id="floatingAiMinimize" class="floating-ai-icon-button" type="button" aria-label="Minimize Yash AI">−</button><button id="floatingAiClose" class="floating-ai-icon-button" type="button" aria-label="Close Yash AI">×</button></div>
+    </header>
+    <div class="floating-ai-toolbar"><label for="floatingAiLanguage">Language</label><select id="floatingAiLanguage" aria-label="Yash AI language"><option value="en">English</option><option value="kn">ಕನ್ನಡ</option><option value="hi">हिन्दी</option></select></div>
+    <div id="floatingAiMessages" class="floating-ai-messages" aria-live="polite"><div class="floating-ai-message assistant"><strong>Yash AI</strong><p>Hello! I can help with fictional camp operations, reports, posters, translations, and presentation support. I cannot diagnose or prescribe.</p></div></div>
+    <div class="floating-ai-prompts"><button type="button" data-floating-ai-prompt="Summarize today’s camp operations.">Summarize camp</button><button type="button" data-floating-ai-prompt="Which department has the longest queue?">Explain queue</button><button type="button" data-floating-ai-prompt="Translate this camp announcement into Kannada.">Translate</button></div>
+    <form id="floatingAiForm" class="floating-ai-form"><textarea id="floatingAiInput" rows="2" placeholder="Ask about camp operations, reports, posters, or translations…" aria-label="Ask Yash AI"></textarea><button id="floatingAiSend" class="button button-primary" type="submit">Send</button></form>
+    <footer class="floating-ai-footer"><span>Fictional demo data only</span><button id="floatingAiClear" class="text-button" type="button">Clear chat</button></footer>
+  </aside>
+
+  <div id="commandPalette" class="modal-backdrop" aria-hidden="true">
+    <div class="command-palette" role="dialog" aria-modal="true" aria-labelledby="commandPaletteTitle">
+      <div class="panel-header"><div><p class="eyebrow-text">Quick action</p><h2 id="commandPaletteTitle">Command palette</h2></div><button id="closeCommandPaletteButton" class="modal-close" type="button" aria-label="Close command palette">×</button></div>
+      <button id="commandAskAiButton" class="command-action" type="button"><strong>Ask Yash AI</strong><span>Open the fictional operations assistant</span><kbd>Ctrl K</kbd></button>
+      <p class="command-hint">Press Ctrl + K or Cmd + K from anywhere in the app.</p>
+    </div>
+  </div>
+
+  <div id="aiPreviewModal" class="modal-backdrop" aria-hidden="true">
+    <div class="login-modal ai-preview-modal" role="dialog" aria-modal="true" aria-labelledby="aiPreviewTitle">
+      <button id="closeAiPreviewButton" class="modal-close" type="button" aria-label="Close data preview">×</button>
+      <p class="eyebrow-text">Data preview before AI</p>
+      <h2 id="aiPreviewTitle">Review the safe demo data</h2>
+      <p class="modal-description">Yash AI uses only aggregate fictional information. The destination changes only when a server-side provider key is configured.</p>
+      <div class="ai-preview-list"><div><strong>Included</strong><span id="aiPreviewIncluded">Aggregate operational totals</span></div><div><strong>Removed</strong><span>Patient identifiers, medical histories, diagnoses, prescriptions, and contact details</span></div><div><strong>Destination</strong><span id="aiPreviewDestination">Checking the local AI service…</span></div></div>
+      <div class="ai-preview-actions"><button id="cancelAiPreviewButton" class="button button-ghost" type="button">Cancel</button><button id="confirmAiPreviewButton" class="button button-primary" type="button">Confirm and generate</button></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+  <script src="script.js?v=20260920-capabilities"></script>
+</body>
