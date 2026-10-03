@@ -7,17 +7,25 @@
       name="description"
       content="SmartCare Camp community health operations website."
     />
-    <meta name="theme-color" content="#159ca3" />
+    <meta name="theme-color" content="#080d18" />
     <link rel="manifest" href="manifest.json" />
-    <link rel="icon" href="icon.svg" type="image/svg+xml" />
+    <link rel="icon" href="icon.svg?v=20261003-premium" type="image/svg+xml" />
     <title>SmartCare Camp</title>
-    <script src="theme-init.js?v=20260920-ai-backend"></script>
-    <link rel="stylesheet" href="styles.css?v=20260920-capabilities" />
+    <script src="theme-init.js?v=20261003-premium4"></script>
+    <link rel="stylesheet" href="styles.css?v=20261003-premium4" />
+    <script src="script.js?v=20261003-premium4" defer></script>
+    <script src="hero-3d.js?v=20261003-premium4" type="module"></script>
   </head>
-  <body data-theme="light" data-theme-preference="light">
+  <body data-theme="dark" data-theme-preference="dark">
     <header class="site-header">
       <a href="#" class="brand" aria-label="SmartCare Camp home">
-        <span class="brand-icon">✚</span>
+        <span class="brand-icon" aria-hidden="true">
+          <svg class="brand-symbol" viewBox="0 0 48 48" fill="none" focusable="false">
+            <path d="M24 39s-13-8.1-13-18.1A7.8 7.8 0 0 1 24 16a7.8 7.8 0 0 1 13 4.9C37 30.9 24 39 24 39Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+            <path d="M13.5 24h7l3-5 4.2 10 3-5h4.8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="24" cy="8" r="2" fill="currentColor"/>
+          </svg>
+        </span>
         <span>
           <strong>SmartCare Camp</strong>
           <small>Community health operations</small>
@@ -56,7 +64,13 @@
     </div>
 
     <div id="appStartup" class="app-startup" aria-hidden="true">
-      <div class="startup-mark">✚</div>
+      <div class="startup-mark" aria-hidden="true">
+        <svg class="brand-symbol" viewBox="0 0 48 48" fill="none" focusable="false">
+          <path d="M24 39s-13-8.1-13-18.1A7.8 7.8 0 0 1 24 16a7.8 7.8 0 0 1 13 4.9C37 30.9 24 39 24 39Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+          <path d="M13.5 24h7l3-5 4.2 10 3-5h4.8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="24" cy="8" r="2" fill="currentColor"/>
+        </svg>
+      </div>
       <p class="eyebrow-text">SmartCare Camp</p>
       <h2>Organize camps. Improve care.</h2>
       <div class="startup-loader"><span></span></div>
@@ -74,6 +88,7 @@
 
     <main>
       <section class="hero">
+        <canvas class="hero-scene" id="heroScene" aria-hidden="true"></canvas>
         <div class="hero-glow hero-glow-one"></div>
         <div class="hero-glow hero-glow-two"></div>
 
@@ -81,34 +96,61 @@
           <div class="hero-copy">
             <div class="eyebrow" data-i18n="eyebrowTag">
               <span>✓</span>
-              Built for organized community care
+              Smart community operations
             </div>
 
-            <h1 data-i18n="heroTitle">Run every health camp handoff with confidence.</h1>
+            <h1 data-i18n="heroTitle">Smarter management for healthier communities.</h1>
 
             <p class="hero-description" data-i18n="heroDescription">
-              SmartCare Camp gives community health teams one clear website for planning camps,
-              coordinating patient flow, recording care, managing medicines, and closing follow-ups.
+              Organize camps. Improve care. Strengthen communities.
             </p>
             <p class="typewriter-wrap"><span data-i18n="typewriterPrefix">Building</span> <span id="typewriterText" class="typewriter">care coordination</span></p>
 
             <div class="hero-buttons">
-              <a href="#staff-login" class="button button-primary button-large">
-                Enter staff portal <span>→</span>
+              <a href="#capabilities" class="button button-primary button-large">
+                Explore Demo <span>→</span>
+              </a>
+              <a href="#staff-login" class="button button-outline button-large">
+                Login
               </a>
               <button type="button" class="button button-outline button-large" data-poster-open="true">
                 View Health Camp Poster
               </button>
             </div>
 
-            <div class="trust-points">
-              <span>✓ Role-aware workspace</span>
-              <span>✓ Connected care workflow</span>
-              <span>✓ Fictional demo data</span>
+            <div class="trust-points" aria-label="Trust indicators">
+              <span>✓ Fictional Demo Data</span>
+              <span>✓ English and Kannada</span>
+              <span>✓ Role-Based Workflow</span>
+              <span>✓ Mobile Friendly</span>
+              <span>✓ Yash AI Assistant</span>
             </div>
           </div>
 
           <div class="overview-card">
+            <div class="care-orbit" aria-hidden="true">
+              <span class="orbit-glow"></span>
+              <svg viewBox="0 0 360 220" fill="none" focusable="false">
+                <defs>
+                  <linearGradient id="care-orb-fill" x1="132" y1="61" x2="219" y2="158" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#73F0D0"/>
+                    <stop offset="1" stop-color="#329DE0"/>
+                  </linearGradient>
+                </defs>
+                <ellipse class="orbit-ring orbit-ring-back" cx="180" cy="111" rx="124" ry="50" transform="rotate(-19 180 111)"/>
+                <ellipse class="orbit-ring orbit-ring-front" cx="180" cy="111" rx="124" ry="50" transform="rotate(19 180 111)"/>
+                <circle class="orbit-core-shadow" cx="180" cy="111" r="54"/>
+                <circle class="orbit-core" cx="180" cy="111" r="47" fill="url(#care-orb-fill)"/>
+                <path class="orbit-heart" d="M180 137s-23-14.3-23-32a13.8 13.8 0 0 1 23-8.7 13.8 13.8 0 0 1 23 8.7c0 17.7-23 32-23 32Z"/>
+                <path class="orbit-pulse" d="M161 109h10l5-9 7 21 6-12h10"/>
+                <circle class="orbit-node orbit-node-one" cx="61" cy="76" r="9"/>
+                <circle class="orbit-node orbit-node-two" cx="287" cy="66" r="7"/>
+                <circle class="orbit-node orbit-node-three" cx="282" cy="166" r="10"/>
+                <circle class="orbit-node orbit-node-four" cx="77" cy="163" r="6"/>
+                <path class="orbit-link" d="m74 80 59 15m99-20 36-6m-33 69 38 24m-124-29-65 27"/>
+              </svg>
+              <span class="orbit-caption">Care, connected</span>
+            </div>
             <div class="overview-header">
               <p>SMARTCARE AT A GLANCE</p>
               <h2>One connected care journey</h2>
@@ -307,7 +349,13 @@
             </div>
           </div>
           <div class="upcoming-camp-visual" aria-hidden="true">
-            <div class="camp-visual-symbol">✚</div>
+            <div class="camp-visual-symbol">
+              <svg class="brand-symbol" viewBox="0 0 48 48" fill="none" focusable="false">
+                <path d="M24 39s-13-8.1-13-18.1A7.8 7.8 0 0 1 24 16a7.8 7.8 0 0 1 13 4.9C37 30.9 24 39 24 39Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+                <path d="M13.5 24h7l3-5 4.2 10 3-5h4.8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="24" cy="8" r="2" fill="currentColor"/>
+              </svg>
+            </div>
             <div class="visual-pill">Free Entry</div>
             <div class="visual-pill soft">Community Focus</div>
           </div>
@@ -458,31 +506,79 @@
       </section>
 
     <section class="portal-dashboard" id="portalDashboard" aria-live="polite">
-      <div class="portal-header">
-        <div>
-          <p class="eyebrow-text" id="portalBreadcrumb">Authorized staff workspace</p>
-          <h2 id="portalPageTitle" tabindex="-1">Digital Health Camp Operations</h2>
-          <div id="portalUserLabel" class="portal-user-badge">Guest access</div>
-        </div>
-        <div class="portal-actions">
-          <div class="portal-tabs" role="tablist" aria-label="Portal sections">
-            <button class="tab-button active" type="button" data-tab="dashboard-panel">Dashboard</button>
-            <button class="tab-button" type="button" data-tab="workflow-panel">Workflow</button>
-            <button class="tab-button" type="button" data-tab="register-panel">Register Patient</button>
-            <button class="tab-button" type="button" data-tab="queue-panel">Queue</button>
-            <button class="tab-button" type="button" data-tab="scanner-panel">QR Scanner</button>
-            <button class="tab-button" type="button" data-tab="pharmacy-panel">Pharmacy</button>
-            <button class="tab-button" type="button" data-tab="reports-panel">Reports</button>
-            <button class="tab-button" type="button" data-tab="settings-panel">Settings</button>
-            <button class="tab-button" type="button" data-tab="profile-panel">Profile</button>
-            <button class="tab-button" type="button" data-tab="ai-panel">Yash AI</button>
+      <div class="portal-shell">
+        <aside class="portal-sidebar" aria-label="SmartCare Camp workspace navigation">
+          <div class="portal-brand" aria-label="SmartCare Camp home">
+            <span class="portal-brand-mark">
+              <svg class="brand-symbol" viewBox="0 0 48 48" fill="none" focusable="false">
+                <path d="M24 39s-13-8.1-13-18.1A7.8 7.8 0 0 1 24 16a7.8 7.8 0 0 1 13 4.9C37 30.9 24 39 24 39Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+                <path d="M13.5 24h7l3-5 4.2 10 3-5h4.8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="24" cy="8" r="2" fill="currentColor"/>
+              </svg>
+            </span>
+            <div>
+              <strong>SmartCare Camp</strong>
+              <small>Community health platform</small>
+            </div>
           </div>
-          <button id="logoutButton" class="button button-ghost small-button" type="button">Logout</button>
-        </div>
-      </div>
 
-      <div class="portal-panels">
-        <div class="portal-panel active" id="dashboard-panel">
+          <div class="portal-sidebar-group">
+            <span class="portal-section-label">Operations</span>
+            <div class="portal-tabs" role="tablist" aria-label="Portal sections">
+              <button class="tab-button active" type="button" data-tab="dashboard-panel">Dashboard</button>
+              <button class="tab-button" type="button" data-tab="workflow-panel">Workflow</button>
+              <button class="tab-button" type="button" data-tab="capacity-panel">Capacity</button>
+              <button class="tab-button" type="button" data-tab="register-panel">Register Visitor</button>
+              <button class="tab-button" type="button" data-tab="queue-panel">Queue</button>
+              <button class="tab-button" type="button" data-tab="scanner-panel">Check-in / QR</button>
+              <button class="tab-button" type="button" data-tab="pharmacy-panel">Pharmacy</button>
+              <button class="tab-button" type="button" data-tab="reports-panel">Reports</button>
+              <button class="tab-button" type="button" data-tab="settings-panel">Settings</button>
+              <button class="tab-button" type="button" data-tab="profile-panel">Profile</button>
+              <button class="tab-button" type="button" data-tab="ai-panel">Yash AI</button>
+            </div>
+          </div>
+
+          <div class="portal-sidebar-footer">
+            <button id="portalThemeToggle" class="portal-side-action" type="button" aria-label="Toggle theme">☀️ Theme</button>
+            <button id="portalLanguageToggle" class="portal-side-action" type="button" aria-label="Toggle language">English</button>
+            <button class="portal-side-action" type="button">Help</button>
+            <div class="portal-user-card">
+              <span class="portal-avatar" id="profileAvatar">SC</span>
+              <div>
+                <strong id="profileName">Staff profile</strong>
+                <small id="profileRole">Guest</small>
+              </div>
+            </div>
+            <button id="logoutButton" class="button button-ghost small-button portal-logout" type="button">Logout</button>
+          </div>
+        </aside>
+
+        <main class="portal-main">
+          <header class="portal-header">
+            <div class="portal-header-copy">
+              <p class="eyebrow-text" id="portalBreadcrumb">Authorized staff workspace</p>
+              <h2 id="portalPageTitle" tabindex="-1">Digital Health Camp Operations</h2>
+              <div id="portalUserLabel" class="portal-user-badge">Guest access</div>
+            </div>
+
+            <div class="portal-top-actions" aria-label="Portal utilities">
+              <label class="portal-search" aria-label="Search workspace">
+                <span aria-hidden="true">⌕</span>
+                <input type="search" placeholder="Search" aria-label="Search workspace" />
+              </label>
+              <button class="portal-utility" type="button" aria-label="Notifications">🔔</button>
+              <button id="portalHeaderThemeToggle" class="portal-utility" type="button" aria-label="Toggle theme">☀️</button>
+              <button id="portalHeaderLanguageToggle" class="portal-utility" type="button" aria-label="Toggle language">EN</button>
+              <button class="portal-profile-pill" type="button" aria-label="Open profile menu">
+                <span class="portal-profile-dot">S</span>
+                <span>Staff</span>
+              </button>
+            </div>
+          </header>
+
+          <div class="portal-panels">
+            <div class="portal-panel active" id="dashboard-panel">
           <div class="demo-mode-banner"><strong>DEMO MODE</strong><span>Fictional records are stored in this browser only. Do not use real health information.</span></div>
           <div class="dashboard-action-row">
             <button id="continueWorkflowButton" class="button button-primary small-button" type="button">Continue Workflow</button>
@@ -491,6 +587,13 @@
             <div id="recommendedActionBanner" class="recommended-action-banner" aria-live="polite">Register your first patient.</div>
           </div>
           <div class="dashboard-summary-grid" id="dashboardSummaryGrid"></div>
+          <section class="panel-card dashboard-alerts-card" aria-labelledby="dashboardAlertsTitle">
+            <div class="panel-header">
+              <div><p class="eyebrow-text">Operations watch</p><h3 id="dashboardAlertsTitle">Smart alerts</h3></div>
+              <span class="status-badge neutral" id="dashboardAlertCount">0 alerts</span>
+            </div>
+            <div id="dashboardAlerts" class="dashboard-alerts" aria-live="polite"></div>
+          </section>
           <div class="panel-card yash-ai-summary-card">
             <div class="panel-header"><div><p class="eyebrow-text">YASH AI</p><h3>Your Smart Community Health Camp Assistant</h3></div><span id="dashboardAiStatus" class="status-badge success">Demo Mode</span></div>
             <p>Get a fictional, aggregate-only operational summary with clear next steps for the camp team.</p>
@@ -513,12 +616,39 @@
 
         <div class="portal-panel" id="workflow-panel">
           <div class="panel-card workflow-app-card">
-            <div class="panel-header"><div><p class="eyebrow-text">Guided application workflow</p><h3>Complete a camp visit step by step</h3></div><span class="status-badge success" id="workflowProgressLabel">0 of 15 complete</span></div>
+              <div class="panel-header"><div><p class="eyebrow-text">Guided application workflow</p><h3>Complete a camp visit step by step</h3></div><div class="panel-header-actions"><span class="status-badge success" id="workflowProgressLabel">0 of 15 complete</span><button id="openCapacityButton" class="button button-outline small-button" type="button">Manage capacity</button></div></div>
             <div class="workflow-progress-track"><span id="workflowProgressBar"></span></div>
             <div class="workflow-layout-app">
               <nav class="workflow-step-list" id="workflowStepList" aria-label="Workflow steps"></nav>
               <section class="workflow-step-detail" aria-live="polite"><span id="workflowStepNumber" class="workflow-step-number">Step 1</span><h3 id="workflowStepTitle">Create or select camp</h3><p id="workflowStepDescription">Start with a fictional camp record and choose the current event for this demonstration.</p><div class="workflow-data-note" id="workflowDataNote">No demo record created for this step yet.</div><div class="workflow-actions"><button id="workflowBackButton" class="button button-ghost" type="button">Back</button><button id="workflowDraftButton" class="button button-outline" type="button">Save draft</button><button id="workflowNextButton" class="button button-primary" type="button">Complete step</button></div><button id="resumeWorkflowButton" class="text-button" type="button">Resume last workflow state</button></section>
             </div>
+          </div>
+        </div>
+
+        <div class="portal-panel" id="capacity-panel">
+          <div class="panel-card">
+            <div class="panel-header"><div><p class="eyebrow-text">Camp planning</p><h3>Capacity and waitlist</h3></div><span class="status-badge success">Fictional planning data</span></div>
+            <p class="medical-notice">Capacity controls are for this browser demo only. They coordinate fictional registrations and do not provide medical or clinical decisions.</p>
+            <form id="capacityForm" class="capacity-form">
+              <div class="field-grid">
+                <label>Camp name<input id="campCapacityName" type="text" required /></label>
+                <label>Camp date<input id="campCapacityDate" type="date" required /></label>
+                <label>Camp capacity<input id="campCapacityInput" type="number" min="1" max="10000" required /></label>
+              </div>
+              <div class="capacity-submit-row"><button class="button button-primary" type="submit">Save camp capacity</button><span id="capacitySaveStatus" class="form-status" role="status" aria-live="polite"></span></div>
+            </form>
+            <div id="campCapacityMetrics" class="capacity-metrics"></div>
+          </div>
+          <div class="panel-card">
+            <div class="panel-header"><div><p class="eyebrow-text">Department planning</p><h3>Department capacities</h3></div><span class="status-badge neutral">Edit and rebalance</span></div>
+            <form id="departmentCapacityForm" class="department-capacity-form">
+              <div id="departmentCapacityList" class="department-capacity-list"></div>
+              <div class="capacity-submit-row"><button class="button button-primary" type="submit">Save department capacities</button><span id="departmentCapacityStatus" class="form-status" role="status" aria-live="polite"></span></div>
+            </form>
+          </div>
+          <div class="panel-card">
+            <div class="panel-header"><div><p class="eyebrow-text">Overflow handling</p><h3>Current waitlist</h3></div><span class="status-badge warning">Fictional queue</span></div>
+            <div id="waitlistManagementList" class="waitlist-management-list"></div>
           </div>
         </div>
 
@@ -555,8 +685,19 @@
                   Camp name
                   <input id="campName" name="campName" type="text" value="Smart Community Health Camp 2026" required />
                 </label>
+                <label>
+                  Department
+                  <select id="patientDepartment" name="department" required>
+                    <option value="General Check-up">General Check-up</option>
+                    <option value="Blood Pressure">Blood Pressure</option>
+                    <option value="Blood Sugar">Blood Sugar</option>
+                    <option value="Consultation">Consultation</option>
+                    <option value="BMI & Weight">BMI & Weight</option>
+                  </select>
+                </label>
               </div>
 
+              <p class="form-privacy-note"><strong>Fictional demo only.</strong> Do not enter real patient information. The QR token contains only a token ID, camp ID, verification code, and demo marker.</p>
               <button class="button button-primary" type="submit">Register patient</button>
             </form>
           </div>
@@ -572,36 +713,41 @@
         <div class="portal-panel" id="scanner-panel">
           <div class="panel-card scanner-card">
             <div class="panel-header">
-              <h3>QR scanner</h3>
+              <div><p class="eyebrow-text">Demo QR check-in</p><h3>Verify a fictional token</h3></div>
               <span class="status-badge neutral">Authorized staff only</span>
             </div>
+            <p class="medical-notice">Camera scanning is optional. Use Simulate Scan or enter a token ID manually. Never use real patient information.</p>
 
             <div class="scanner-layout">
               <div class="scanner-controls">
-                <label for="scannerInput">Patient QR / Patient ID</label>
-                <input id="scannerInput" type="text" placeholder="Paste QR payload or Patient ID" />
-
+                <label for="scannerInput">Token ID or QR payload</label>
+                <input id="scannerInput" type="text" placeholder="Enter SC-TOKEN-... or paste QR payload" autocomplete="off" />
                 <div class="scanner-actions">
-                  <button id="scanQrButton" class="button button-primary" type="button">Scan QR</button>
+                  <button id="scanQrButton" class="button button-primary" type="button">Verify and check in</button>
+                  <button id="simulateScanButton" class="button button-outline" type="button">Simulate Scan</button>
                   <label class="upload-button" for="qrImageInput">Upload QR image</label>
                   <input id="qrImageInput" type="file" accept="image/*" hidden />
                 </div>
-
-                <div id="scannerStatus" class="scanner-status idle">Awaiting QR input.</div>
+                <div id="scannerStatus" class="scanner-status idle">Awaiting a fictional token.</div>
+                <div id="checkInSuccess" class="check-in-success" role="status" aria-live="polite" hidden></div>
               </div>
 
               <div class="patient-profile-card" id="patientProfileCard">
-                <p class="eyebrow-text">Patient details</p>
-                <div id="patientProfileContent" class="empty-state">No patient loaded yet.</div>
+                <p class="eyebrow-text">Fictional patient record</p>
+                <div id="patientProfileContent" class="empty-state">No token loaded yet.</div>
               </div>
             </div>
+          </div>
+          <div class="panel-card">
+            <div class="panel-header"><div><p class="eyebrow-text">Audit trail</p><h3>Recent check-in activity</h3></div><span class="status-badge success">Local demo log</span></div>
+            <div id="activityLogList" class="activity-log-list"><div class="empty-state">No check-in activity yet.</div></div>
           </div>
         </div>
 
         <div class="portal-panel" id="queue-panel">
           <div class="panel-card">
-            <div class="panel-header"><div><p class="eyebrow-text">Registration workflow</p><h3>Queue management</h3></div><span class="status-badge neutral" id="queueCountBadge">0 waiting</span></div>
-            <div class="queue-toolbar"><input id="queueSearchInput" type="search" placeholder="Search patient or token" aria-label="Search queue" /><button id="callNextButton" class="button button-primary" type="button">Call next</button></div>
+            <div class="panel-header"><div><p class="eyebrow-text">Registration workflow</p><h3>Queue management</h3></div><div class="panel-header-actions"><span class="status-badge neutral" id="queueCountBadge">0 waiting</span><button id="queueDisplayButton" class="button button-outline small-button" type="button">Public display</button></div></div>
+            <div class="queue-toolbar"><input id="queueSearchInput" type="search" placeholder="Search token or fictional patient" aria-label="Search queue" /><button id="callNextButton" class="button button-primary" type="button">Call next</button></div>
             <div id="queueList" class="queue-list"></div>
           </div>
         </div>
@@ -656,6 +802,24 @@
           </div>
           <div class="panel-card ai-safety-card"><div class="panel-header"><div><p class="eyebrow-text">AI safety center</p><h3>Data boundaries and review</h3></div><span class="status-badge warning">Human review required</span></div><div class="ai-boundary-grid"><div><strong>Included</strong><span>Aggregate counts, queue totals, stock totals, workflow status, and fictional education prompts.</span></div><div><strong>Excluded</strong><span>Names, phone numbers, addresses, diagnoses, prescriptions, histories, and identifiable test results.</span></div><div><strong>Provider status</strong><span id="aiProviderStatus">Checking the local secure AI service…</span></div><div><strong>Audit</strong><span id="aiAuditSummary">No Yash AI requests recorded.</span></div></div></div>
         </div>
+          </div>
+        </main>
+      </div>
+    </section>
+
+    <section class="public-route-view" id="queueDisplayView" hidden>
+      <div class="public-queue-shell">
+        <div class="public-route-header"><div><p class="eyebrow-text">SmartCare Camp · Public display</p><h1>Now serving</h1><p>Token numbers and operational stages only. No names or contact details are shown.</p></div><span class="status-badge success">Fictional demo</span></div>
+        <div id="publicQueueSummary" class="public-queue-summary"></div>
+        <div id="publicQueueDisplay" class="public-queue-display"></div>
+        <p class="public-route-footnote">This display uses fictional local data. It is not a medical triage or diagnosis screen.</p>
+      </div>
+    </section>
+
+    <section class="public-route-view" id="tokenRouteView" hidden>
+      <div class="public-token-card">
+        <div class="public-route-header"><div><p class="eyebrow-text">SmartCare Camp · Fictional token</p><h1>Camp token slip</h1><p>Only non-identifying token information is shown.</p></div><span class="status-badge success">Demo mode</span></div>
+        <div id="tokenRouteContent" class="token-route-content"></div>
       </div>
     </section>
   </main>
@@ -708,7 +872,13 @@
       <button class="poster-close" type="button" aria-label="Close health camp poster">×</button>
       <div class="poster-shell">
         <header class="poster-header">
-          <div class="poster-brand-mark">✚</div>
+          <div class="poster-brand-mark">
+            <svg class="brand-symbol" viewBox="0 0 48 48" fill="none" focusable="false">
+              <path d="M24 39s-13-8.1-13-18.1A7.8 7.8 0 0 1 24 16a7.8 7.8 0 0 1 13 4.9C37 30.9 24 39 24 39Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+              <path d="M13.5 24h7l3-5 4.2 10 3-5h4.8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="24" cy="8" r="2" fill="currentColor"/>
+            </svg>
+          </div>
           <div class="poster-brand-copy">
             <span class="poster-tag">SmartCare Camp</span>
             <strong>Community Health Initiative</strong>
@@ -723,7 +893,13 @@
             <p class="poster-message">“Your health matters. Join us for a free community health check-up camp.”</p>
           </div>
           <div class="poster-illustration" aria-hidden="true">
-            <div class="medical-cross">✚</div>
+            <div class="medical-cross">
+              <svg class="brand-symbol" viewBox="0 0 48 48" fill="none" focusable="false">
+                <path d="M24 39s-13-8.1-13-18.1A7.8 7.8 0 0 1 24 16a7.8 7.8 0 0 1 13 4.9C37 30.9 24 39 24 39Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+                <path d="M13.5 24h7l3-5 4.2 10 3-5h4.8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="24" cy="8" r="2" fill="currentColor"/>
+              </svg>
+            </div>
             <div class="doctor-badge">❤</div>
             <div class="shape shape-one"></div>
             <div class="shape shape-two"></div>
@@ -820,7 +996,13 @@
     <div class="registration-modal" role="dialog" aria-modal="true" aria-labelledby="registrationTitle">
       <button class="poster-close registration-close" type="button" aria-label="Close registration dialog">×</button>
       <div class="registration-header">
-        <div class="poster-brand-mark small-mark">✚</div>
+        <div class="poster-brand-mark small-mark">
+          <svg class="brand-symbol" viewBox="0 0 48 48" fill="none" focusable="false">
+            <path d="M24 39s-13-8.1-13-18.1A7.8 7.8 0 0 1 24 16a7.8 7.8 0 0 1 13 4.9C37 30.9 24 39 24 39Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+            <path d="M13.5 24h7l3-5 4.2 10 3-5h4.8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="24" cy="8" r="2" fill="currentColor"/>
+          </svg>
+        </div>
         <div>
           <p class="eyebrow-text">CAMP REGISTRATION</p>
           <h2 id="registrationTitle">Register for the health camp</h2>
@@ -888,7 +1070,13 @@
   <div class="modal-backdrop" id="loginModal" aria-hidden="true">
     <div class="login-modal" role="dialog" aria-modal="true" aria-labelledby="portalTitle">
       <button class="modal-close" id="closeModal" aria-label="Close">×</button>
-      <div class="modal-icon">✚</div>
+      <div class="modal-icon">
+        <svg class="brand-symbol" viewBox="0 0 48 48" fill="none" focusable="false">
+          <path d="M24 39s-13-8.1-13-18.1A7.8 7.8 0 0 1 24 16a7.8 7.8 0 0 1 13 4.9C37 30.9 24 39 24 39Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+          <path d="M13.5 24h7l3-5 4.2 10 3-5h4.8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="24" cy="8" r="2" fill="currentColor"/>
+        </svg>
+      </div>
       <p class="eyebrow-text">Staff access</p>
       <h2 id="portalTitle">SmartCare portal</h2>
       <p class="modal-description">
@@ -991,6 +1179,6 @@
     </div>
   </div>
 
+  <div id="customCursor" class="custom-cursor" aria-hidden="true"></div>
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
-  <script src="script.js?v=20260920-capabilities"></script>
 </body>

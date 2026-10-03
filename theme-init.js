@@ -1,7 +1,13 @@
 (() => {
-  let preference = "light";
+  let preference = "dark";
   try {
-    preference = localStorage.getItem("smartcareTheme") || "light";
+    const designVersion = "premium-dark-v1";
+    if (localStorage.getItem("smartcareThemeDesign") !== designVersion) {
+      localStorage.setItem("smartcareTheme", preference);
+      localStorage.setItem("smartcareThemeDesign", designVersion);
+    } else {
+      preference = localStorage.getItem("smartcareTheme") || "dark";
+    }
   } catch (error) {
     document.documentElement.dataset.storageFallback = "true";
   }

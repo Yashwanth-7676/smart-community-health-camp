@@ -1,5 +1,5 @@
-const CACHE_NAME = "smartcare-shell-v14";
-const APP_SHELL = ["./", "./index.html", "./theme-init.js?v=20260920-ai-backend", "./styles.css?v=20260920-capabilities", "./script.js?v=20260920-capabilities", "./manifest.json", "./icon.svg"];
+const CACHE_NAME = "smartcare-shell-v18";
+const APP_SHELL = ["./", "./index.html", "./theme-init.js?v=20261003-premium4", "./styles.css?v=20261003-premium4", "./script.js?v=20261003-premium4", "./hero-3d.js?v=20261003-premium4", "./manifest.json", "./icon.svg"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)));

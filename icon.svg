@@ -1,11 +1,23 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
   <title id="title">SmartCare Camp</title>
-  <desc id="desc">A teal medical cross inside a navy shield with community circles.</desc>
-  <rect width="512" height="512" rx="112" fill="#071a27"/>
-  <path d="M256 66 406 124v112c0 99-64 165-150 210-86-45-150-111-150-210V124L256 66Z" fill="#159ca3"/>
-  <path d="M224 130h64v88h88v64h-88v88h-64v-88h-88v-64h88v-88Z" fill="#fff"/>
-  <circle cx="148" cy="392" r="30" fill="#39d39a"/>
-  <circle cx="256" cy="392" r="30" fill="#ffbd69"/>
-  <circle cx="364" cy="392" r="30" fill="#39d39a"/>
-  <path d="M148 362v-26m108 26v-26m108 26v-26" stroke="#fff" stroke-width="12" stroke-linecap="round"/>
+  <desc id="desc">A connected heart and care pulse on a teal-blue field.</desc>
+  <defs>
+    <linearGradient id="field" x1="64" y1="48" x2="448" y2="464" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#163B65"/>
+      <stop offset="1" stop-color="#087F86"/>
+    </linearGradient>
+    <linearGradient id="heart" x1="164" y1="140" x2="352" y2="366" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#9AF2D5"/>
+      <stop offset="1" stop-color="#56C5E5"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="128" fill="#071A27"/>
+  <rect x="32" y="32" width="448" height="448" rx="112" fill="url(#field)"/>
+  <circle cx="256" cy="250" r="170" fill="#fff" fill-opacity=".06"/>
+  <path d="M256 355s-111-68-111-152a67 67 0 0 1 111-42 67 67 0 0 1 111 42c0 84-111 152-111 152Z" fill="url(#heart)" stroke="#E8FFF8" stroke-width="12" stroke-linejoin="round"/>
+  <path d="M171 253h52l24-44 35 91 30-53h29" fill="none" stroke="#103B55" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="256" cy="83" r="15" fill="#FFF3C4"/>
+  <circle cx="88" cy="253" r="13" fill="#FFF3C4" fill-opacity=".9"/>
+  <circle cx="424" cy="253" r="13" fill="#FFF3C4" fill-opacity=".9"/>
+  <path d="M101 253h44m222 0h44M256 98v47" stroke="#D8FFF2" stroke-opacity=".8" stroke-width="8" stroke-linecap="round"/>
 </svg>

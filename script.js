@@ -2,7 +2,24 @@ const STORAGE_KEY = "smartcarePatientDatabase";
 const ACCOUNTS_KEY = "smartcareAccounts";
 const ACTIVE_USER_KEY = "smartcareActiveUser";
 const PATIENT_DB_PREFIX = "smartcarePatientDatabase_";
+const DEMO_MEDICINES_KEY = "smartcareDemoMedicines";
 const DEFAULT_CAMP_NAME = "Smart Community Health Camp 2026";
+const DEFAULT_CAMP_ID = "SC-CAMP-2026";
+const DEFAULT_CAMP_DATE = "2026-09-27";
+const DEFAULT_CAMP_CAPACITY = 120;
+const DEFAULT_DEPARTMENT_CAPACITIES = {
+  "General Check-up": 40,
+  "Blood Pressure": 25,
+  "Blood Sugar": 25,
+  "Consultation": 30,
+  "BMI & Weight": 20
+};
+const CAPACITY_STORAGE_KEY = "smartcareCapacity";
+const ACTIVITY_LOG_KEY = "smartcareActivityLog";
+const TOKEN_COUNTER_KEY = "smartcareTokenCounter";
+const PUBLIC_TOKEN_STORAGE_KEY = "smartcarePublicTokens";
+const QUEUE_STATUSES = ["Registered", "Checked in", "Waiting", "Called", "Screening", "Consultation", "Pharmacy", "Completed", "Cancelled", "No show"];
+const TERMINAL_QUEUE_STATUSES = new Set(["Completed", "Cancelled", "No show"]);
 
 const appStorage = (() => {
   const memory = new Map();
@@ -81,6 +98,76 @@ const floatingAiLanguage = document.getElementById("floatingAiLanguage");
 let pendingAiPrompt = "";
 let yashAiMode = "demo";
 
+const ROLE_PERMISSIONS = {
+  Administrator: [
+    "dashboard-panel",
+    "workflow-panel",
+    "capacity-panel",
+    "register-panel",
+    "queue-panel",
+    "scanner-panel",
+    "pharmacy-panel",
+    "reports-panel",
+    "settings-panel",
+    "profile-panel",
+    "ai-panel",
+    "presentation-panel"
+  ],
+  "Camp Organizer": [
+    "dashboard-panel",
+    "workflow-panel",
+    "capacity-panel",
+    "register-panel",
+    "queue-panel",
+    "scanner-panel",
+    "reports-panel",
+    "settings-panel",
+    "profile-panel",
+    "ai-panel",
+    "presentation-panel"
+  ],
+  Doctor: [
+    "dashboard-panel",
+    "workflow-panel",
+    "queue-panel",
+    "scanner-panel",
+    "reports-panel",
+    "profile-panel",
+    "ai-panel",
+    "presentation-panel"
+  ],
+  Nurse: [
+    "dashboard-panel",
+    "workflow-panel",
+    "queue-panel",
+    "scanner-panel",
+    "reports-panel",
+    "profile-panel",
+    "ai-panel",
+    "presentation-panel"
+  ],
+  Volunteer: [
+    "dashboard-panel",
+    "workflow-panel",
+    "register-panel",
+    "queue-panel",
+    "scanner-panel",
+    "reports-panel",
+    "profile-panel",
+    "ai-panel",
+    "presentation-panel"
+  ],
+  Pharmacist: [
+    "dashboard-panel",
+    "workflow-panel",
+    "pharmacy-panel",
+    "reports-panel",
+    "profile-panel",
+    "ai-panel",
+    "presentation-panel"
+  ]
+};
+
 const patientRegistrationForm = document.getElementById("patientRegistrationForm");
 const recentPatientsList = document.getElementById("recentPatientsList");
 const patientProfileContent = document.getElementById("patientProfileContent");
@@ -88,6 +175,18 @@ const scannerInput = document.getElementById("scannerInput");
 const scannerStatus = document.getElementById("scannerStatus");
 const scanQrButton = document.getElementById("scanQrButton");
 const qrImageInput = document.getElementById("qrImageInput");
+const simulateScanButton = document.getElementById("simulateScanButton");
+const checkInSuccess = document.getElementById("checkInSuccess");
+const activityLogList = document.getElementById("activityLogList");
+const queueDisplayButton = document.getElementById("queueDisplayButton");
+const tokenRouteView = document.getElementById("tokenRouteView");
+const tokenRouteContent = document.getElementById("tokenRouteContent");
+const queueDisplayView = document.getElementById("queueDisplayView");
+const publicQueueSummary = document.getElementById("publicQueueSummary");
+const publicQueueDisplay = document.getElementById("publicQueueDisplay");
+const openCapacityButton = document.getElementById("openCapacityButton");
+const capacityForm = document.getElementById("capacityForm");
+const departmentCapacityForm = document.getElementById("departmentCapacityForm");
 const campPosterModal = document.getElementById("campPosterModal");
 const campRegistrationModal = document.getElementById("campRegistrationModal");
 const printPosterButton = document.getElementById("printPosterButton");
@@ -107,6 +206,12 @@ const APP_ROUTE_TO_PANEL = {
   workflow: "workflow-panel",
   camps: "workflow-panel",
   "camps/new": "workflow-panel",
+  "camps/capacity": "capacity-panel",
+  capacity: "capacity-panel",
+  departments: "capacity-panel",
+  "departments/capacity": "capacity-panel",
+  "check-in": "scanner-panel",
+  checkin: "scanner-panel",
   patients: "register-panel",
   "patients/new": "register-panel",
   registration: "register-panel",
@@ -141,6 +246,12 @@ const APP_ROUTE_META = {
   workflow: ["Workflow", "Guided care workflow"],
   camps: ["Camps", "Camp management"],
   "camps/new": ["Camps / New", "Create fictional camp"],
+  "camps/capacity": ["Camps / Capacity", "Capacity and waitlist"],
+  capacity: ["Capacity", "Capacity and waitlist"],
+  departments: ["Departments", "Department capacity"],
+  "departments/capacity": ["Departments / Capacity", "Department capacity"],
+  "check-in": ["Check-in", "Demo QR check-in"],
+  checkin: ["Check-in", "Demo QR check-in"],
   patients: ["Patients", "Patient records"],
   "patients/new": ["Patients / New", "Register fictional patient"],
   registration: ["Registration", "Register patient"],
@@ -169,6 +280,19 @@ const APP_ROUTE_META = {
   "project-report": ["Project Report", "Camp operations report"],
   presentation: ["Presentation", "Competition presentation"]
 };
+
+const WORKFLOW_STEPS = [
+  ["Camp Planning", "Plan the fictional camp, staffing setup, and venue readiness before the service begins."],
+  ["Registration", "Capture demographic details, consent, and service interest in one consistent intake flow."],
+  ["Token", "Issue a queue token to keep the patient journey visible and orderly."],
+  ["Queue", "Coordinate the next patient handoff with clear operational status updates."],
+  ["Screening", "Log screening checks, track waiting queues, and escalate to a human review if needed."],
+  ["Consultation", "Move the patient to a consultation flow with a clear handoff for the care team."],
+  ["Medicine", "Check medicine stock, prepare dispensing records, and keep inventory attention visible."],
+  ["Referral", "Create referral follow-ups for services beyond the camp scope."],
+  ["Follow-up", "Track the remaining care steps and community outreach after the camp day."],
+  ["Reports", "Review aggregate results, operational trends, and follow-up progress in a safe demo view."]
+];
 
 const PRESENTATION_SLIDES = [
   ["The problem", "Community health camps need a clear, affordable way to coordinate people, queues, records, and follow-up care.", "Open by describing the community problem, not the technology."],
@@ -202,7 +326,40 @@ const DEMO_ACCOUNTS = [
   { id: "demo-pharmacist", name: "Demo Pharmacist", email: "pharmacist@smartcare.demo", password: "Pharmacy@123", role: "Pharmacist" }
 ];
 
+const DEFAULT_DEMO_MEDICINES = [
+  { id: "med-iron", name: "Iron Tablets", quantity: 48, minimum: 12 },
+  { id: "med-paracetamol", name: "Paracetamol", quantity: 84, minimum: 20 },
+  { id: "med-cough", name: "Cough Syrup", quantity: 26, minimum: 10 },
+  { id: "med-bp", name: "Blood Pressure Check Kit", quantity: 15, minimum: 4 },
+  { id: "med-bandage", name: "Bandages", quantity: 64, minimum: 18 }
+];
+
 let patientDatabase = loadPatients();
+
+function getDemoMedicines() {
+  const saved = appStorage.get(DEMO_MEDICINES_KEY);
+  if (!saved) {
+    saveDemoMedicines(DEFAULT_DEMO_MEDICINES);
+    return [...DEFAULT_DEMO_MEDICINES];
+  }
+
+  try {
+    const parsed = JSON.parse(saved);
+    if (!Array.isArray(parsed) || !parsed.length) {
+      saveDemoMedicines(DEFAULT_DEMO_MEDICINES);
+      return [...DEFAULT_DEMO_MEDICINES];
+    }
+    return parsed;
+  } catch (error) {
+    console.error("Demo medicine data parse failed:", error);
+    saveDemoMedicines(DEFAULT_DEMO_MEDICINES);
+    return [...DEFAULT_DEMO_MEDICINES];
+  }
+}
+
+function saveDemoMedicines(medicines) {
+  appStorage.set(DEMO_MEDICINES_KEY, JSON.stringify(Array.isArray(medicines) ? medicines : DEFAULT_DEMO_MEDICINES));
+}
 
 function getAccounts() {
   const saved = appStorage.get(ACCOUNTS_KEY);
@@ -256,6 +413,116 @@ function setCurrentUser(user) {
 
   appStorage.set(ACTIVE_USER_KEY, JSON.stringify(user));
   syncAuthState();
+}
+
+function syncAuthState() {
+  const user = getCurrentUser();
+  const isLoggedIn = Boolean(user);
+
+  if (portalUserLabel) {
+    portalUserLabel.textContent = user ? `${user.name} • ${user.role}` : "Guest access";
+  }
+
+  if (logoutButton) {
+    logoutButton.hidden = !isLoggedIn;
+  }
+
+  if (portalDashboard) {
+    portalDashboard.classList.toggle("visible", isLoggedIn);
+  }
+
+  if (user) {
+    renderDashboardSummary();
+    renderRoleDashboard();
+    renderProfile();
+    renderRecentPatients();
+    applyRolePermissions();
+  } else {
+    document.body.classList.remove("app-route-active");
+    document.querySelectorAll(".tab-button").forEach((button) => {
+      button.classList.remove("active");
+    });
+    document.querySelectorAll(".portal-panel").forEach((panel) => {
+      panel.classList.remove("active");
+    });
+  }
+}
+
+function refreshCurrentPatientData() {
+  renderRecentPatients();
+  renderDashboardSummary();
+  renderRoleDashboard();
+  renderProfile();
+  renderQueue();
+  renderInventory();
+  renderReports();
+  applyRolePermissions();
+}
+
+function renderRoleDashboard() {
+  const titleNode = document.getElementById("roleDashboardTitle");
+  const contentNode = document.getElementById("roleDashboardContent");
+  const badgeNode = document.getElementById("roleAccessBadge");
+  const currentUser = getCurrentUser();
+
+  if (badgeNode) {
+    badgeNode.textContent = currentUser ? `${currentUser.role} access` : "Guest mode";
+  }
+
+  if (!contentNode) return;
+  if (!currentUser) {
+    titleNode && (titleNode.textContent = "Operations overview");
+    contentNode.innerHTML = "<div class='empty-state'>Sign in to view the role-based dashboard.</div>";
+    return;
+  }
+
+  titleNode && (titleNode.textContent = `${currentUser.role} workspace`);
+  const waiting = patientDatabase.filter((patient) => !patient.queueStatus || patient.queueStatus === "Waiting").length;
+  const screenings = patientDatabase.filter((patient) => (patient.history?.screening || []).length).length;
+  const consultations = patientDatabase.filter((patient) => (patient.history?.consultation || []).length).length;
+  const followups = patientDatabase.filter((patient) => (patient.history?.followup || []).length).length;
+  const lowStock = getDemoMedicines().filter((medicine) => medicine.quantity <= medicine.minimum).length;
+
+  contentNode.innerHTML = `
+    <div class="role-card-grid">
+      <div class="summary-card care"><strong>${patientDatabase.length}</strong><span>Total patients</span></div>
+      <div class="summary-card queue"><strong>${waiting}</strong><span>Waiting</span></div>
+      <div class="summary-card success"><strong>${screenings}</strong><span>Screenings</span></div>
+      <div class="summary-card warning"><strong>${consultations}</strong><span>Consultations</span></div>
+      <div class="summary-card info"><strong>${followups}</strong><span>Follow-ups</span></div>
+      <div class="summary-card danger"><strong>${lowStock}</strong><span>Low stock</span></div>
+    </div>
+  `;
+}
+
+function renderProfile() {
+  const nameNode = document.getElementById("profileName");
+  const roleNode = document.getElementById("profileRole");
+  const emailNode = document.getElementById("profileEmail");
+  const avatarNode = document.getElementById("profileAvatar");
+  const currentUser = getCurrentUser();
+
+  if (!nameNode || !roleNode || !emailNode || !avatarNode) return;
+
+  if (!currentUser) {
+    nameNode.textContent = "Staff profile";
+    roleNode.textContent = "Guest";
+    emailNode.textContent = "Not signed in";
+    avatarNode.textContent = "SC";
+    return;
+  }
+
+  const initials = currentUser.name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() || "")
+    .join("") || "SC";
+
+  nameNode.textContent = currentUser.name;
+  roleNode.textContent = currentUser.role;
+  emailNode.textContent = currentUser.email;
+  avatarNode.textContent = initials;
 }
 
 function getPatientDatabaseKey() {
@@ -315,125 +582,133 @@ function persistPatients() {
   appStorage.set(getPatientDatabaseKey(), JSON.stringify(patientDatabase));
 }
 
-function syncAuthState() {
-  const currentUser = getCurrentUser();
-
-  if (portalUserLabel) {
-    portalUserLabel.textContent = currentUser
-      ? `Signed in: ${currentUser.name} · ${currentUser.role || "Staff"}`
-      : "Guest access";
-  }
-
-  if (logoutButton) {
-    logoutButton.style.display = currentUser ? "inline-flex" : "none";
-  }
-
-  if (portalDashboard) {
-    portalDashboard.classList.toggle("visible", Boolean(currentUser));
-  }
-
-  if (aiAssistButton) {
-    aiAssistButton.hidden = !currentUser;
-  }
-  if (!currentUser) setFloatingAiOpen(false);
-}
-
-function refreshCurrentPatientData() {
-  patientDatabase = loadPatients();
-  renderRecentPatients();
-  renderOperationsPanels();
-}
-
-const ROLE_PERMISSIONS = {
-  Administrator: ["dashboard-panel", "presentation-panel", "workflow-panel", "register-panel", "queue-panel", "scanner-panel", "pharmacy-panel", "reports-panel", "settings-panel", "profile-panel", "ai-panel"],
-  "Camp Organizer": ["dashboard-panel", "presentation-panel", "workflow-panel", "register-panel", "queue-panel", "reports-panel", "settings-panel", "profile-panel", "ai-panel"],
-  Doctor: ["dashboard-panel", "presentation-panel", "workflow-panel", "scanner-panel", "reports-panel", "settings-panel", "profile-panel", "ai-panel"],
-  Nurse: ["dashboard-panel", "presentation-panel", "workflow-panel", "register-panel", "queue-panel", "scanner-panel", "reports-panel", "settings-panel", "profile-panel", "ai-panel"],
-  Volunteer: ["dashboard-panel", "presentation-panel", "workflow-panel", "register-panel", "queue-panel", "settings-panel", "profile-panel", "ai-panel"],
-  Pharmacist: ["dashboard-panel", "presentation-panel", "workflow-panel", "pharmacy-panel", "reports-panel", "settings-panel", "profile-panel", "ai-panel"]
-};
-
-const WORKFLOW_STEPS = [
-  ["Create or select camp", "Start with a fictional camp record and choose the current event."],
-  ["Check camp readiness", "Confirm the venue, equipment, and safety checklist."],
-  ["Assign staff", "Review the role roster for the selected camp."],
-  ["Prepare inventory", "Check fictional medicine and equipment stock."],
-  ["Publish poster", "Open the camp poster and make the event visible."],
-  ["Register patient", "Capture a fictional patient record with consent."],
-  ["Generate token", "Create a queue token and attach it to the patient visit."],
-  ["Complete screening", "Record screening information for qualified review."],
-  ["Complete consultation", "Document a fictional consultation outcome."],
-  ["Add prescription", "Add a fictional prescription item when appropriate."],
-  ["Dispense medicine", "Validate stock and record a fictional dispense event."],
-  ["Create referral or follow-up", "Close the loop with a referral or follow-up action."],
-  ["Close patient visit", "Mark the visit complete after required care steps."],
-  ["View camp statistics", "Review aggregate operational figures."],
-  ["Generate report", "Export or print the fictional camp summary."]
-];
-
-function getDemoMedicines() {
-  const saved = localStorage.getItem("smartcareDemoMedicines");
-  if (saved) {
-    try { return JSON.parse(saved); } catch (error) { console.error("Medicine data parse failed:", error); }
-  }
-  const initial = [
-    { id: "med-1", name: "Paracetamol 500mg", quantity: 42, minimum: 10 },
-    { id: "med-2", name: "ORS Sachets", quantity: 8, minimum: 12 },
-    { id: "med-3", name: "Cetirizine 10mg", quantity: 24, minimum: 10 }
-  ];
-  localStorage.setItem("smartcareDemoMedicines", JSON.stringify(initial));
-  return initial;
-}
-
-function saveDemoMedicines(medicines) {
-  localStorage.setItem("smartcareDemoMedicines", JSON.stringify(medicines));
-}
-
-function renderRoleDashboard() {
-  const currentUser = getCurrentUser();
-  const content = document.getElementById("roleDashboardContent");
-  const title = document.getElementById("roleDashboardTitle");
-  if (!content || !title) return;
-
-  const role = currentUser?.role || "Staff";
-  const copy = {
-    Administrator: "Review every operational area, reset fictional data, and monitor activity.",
-    "Camp Organizer": "Coordinate camp registrations, queue progress, staff handoffs, and reports.",
-    Doctor: "Review assigned patient passes and keep consultation and referral work visible.",
-    Nurse: "Record intake, support screening, and keep the current queue moving.",
-    Volunteer: "Register fictional patients, issue queue tokens, and update queue status.",
-    Pharmacist: "Monitor stock alerts and keep medicine operations ready for dispensing."
+function getCapacityState() {
+  const fallback = {
+    campId: DEFAULT_CAMP_ID,
+    campName: DEFAULT_CAMP_NAME,
+    date: DEFAULT_CAMP_DATE,
+    capacity: DEFAULT_CAMP_CAPACITY,
+    departments: { ...DEFAULT_DEPARTMENT_CAPACITIES }
   };
-  title.textContent = `${role} dashboard`;
-  content.innerHTML = `<p>${copy[role] || "Use the tabs above to work with the demonstration data."}</p><div class="role-chip-row"><span class="role-chip">${role}</span><span class="role-chip">Fictional data</span><span class="role-chip">Local browser storage</span></div>`;
+  const saved = appStorage.get(CAPACITY_STORAGE_KEY);
+  if (!saved) return fallback;
+  try {
+    const parsed = JSON.parse(saved);
+    return {
+      ...fallback,
+      ...parsed,
+      campId: parsed.campId || fallback.campId,
+      campName: parsed.campName || fallback.campName,
+      date: parsed.date || fallback.date,
+      capacity: Math.max(1, Number(parsed.capacity) || fallback.capacity),
+      departments: { ...fallback.departments, ...(parsed.departments || {}) }
+    };
+  } catch (error) {
+    return fallback;
+  }
 }
 
-function renderProfile() {
-  const currentUser = getCurrentUser();
-  const name = document.getElementById("profileName");
-  const role = document.getElementById("profileRole");
-  const email = document.getElementById("profileEmail");
-  const avatar = document.getElementById("profileAvatar");
-  if (!name || !role || !email || !avatar) return;
-  const displayName = currentUser?.name || "Guest access";
-  name.textContent = displayName;
-  role.textContent = currentUser?.role || "Staff";
-  email.textContent = currentUser?.email || "Not signed in";
-  avatar.textContent = displayName.split(" ").map((part) => part[0]).join("").slice(0, 2).toUpperCase();
+function saveCapacityState(state) {
+  const normalized = {
+    campId: state.campId || DEFAULT_CAMP_ID,
+    campName: state.campName || DEFAULT_CAMP_NAME,
+    date: state.date || DEFAULT_CAMP_DATE,
+    capacity: Math.max(1, Number(state.capacity) || DEFAULT_CAMP_CAPACITY),
+    departments: { ...DEFAULT_DEPARTMENT_CAPACITIES, ...(state.departments || {}) }
+  };
+  appStorage.set(CAPACITY_STORAGE_KEY, JSON.stringify(normalized));
+  return normalized;
+}
+
+function getActivityLogs() {
+  const saved = appStorage.get(ACTIVITY_LOG_KEY);
+  if (!saved) return [];
+  try {
+    const parsed = JSON.parse(saved);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function logActivity(action, patient, details = "") {
+  const logs = getActivityLogs();
+  logs.push({
+    timestamp: new Date().toISOString(),
+    action,
+    tokenId: patient?.tokenId || "unknown",
+    department: patient?.department || "General Check-up",
+    status: patient?.queueStatus || "Registered",
+    details
+  });
+  appStorage.set(ACTIVITY_LOG_KEY, JSON.stringify(logs.slice(-100)));
+  renderActivityLog();
+}
+
+function getActivePatients(campId = DEFAULT_CAMP_ID) {
+  return patientDatabase.filter((patient) => patient.campId === campId && !TERMINAL_QUEUE_STATUSES.has(patient.queueStatus));
+}
+
+function getCapacityMetrics(campId = DEFAULT_CAMP_ID, department = "") {
+  const state = getCapacityState();
+  const campPatients = patientDatabase.filter((patient) => patient.campId === campId && !TERMINAL_QUEUE_STATUSES.has(patient.queueStatus));
+  const scopedPatients = department ? campPatients.filter((patient) => patient.department === department) : campPatients;
+  const activePatients = scopedPatients.filter((patient) => !patient.waitlisted);
+  const registeredCount = scopedPatients.length;
+  const checkedInCount = scopedPatients.filter((patient) => patient.queueStatus !== "Registered" || patient.checkedInAt).length;
+  const waitlistCount = scopedPatients.filter((patient) => patient.waitlisted).length;
+  const capacity = department ? Math.max(1, Number(state.departments[department]) || 0) : state.capacity;
+  const availableSlots = Math.max(0, capacity - activePatients.length);
+  return {
+    campId,
+    campName: state.campName,
+    date: state.date,
+    capacity,
+    registeredCount,
+    checkedInCount,
+    availableSlots,
+    waitlistCount,
+    activeCount: activePatients.length,
+    department: department || "All departments"
+  };
+}
+
+function canRegisterForCapacity(department, campId = DEFAULT_CAMP_ID) {
+  const campMetrics = getCapacityMetrics(campId);
+  const departmentMetrics = getCapacityMetrics(campId, department);
+  return campMetrics.availableSlots > 0 && departmentMetrics.availableSlots > 0;
+}
+
+function markPatientWaitlisted(patient) {
+  const state = getCapacityState();
+  const waitlisted = patientDatabase.filter((entry) => entry.campId === patient.campId && entry.waitlisted && !TERMINAL_QUEUE_STATUSES.has(entry.queueStatus));
+  patient.waitlisted = true;
+  patient.waitlistPosition = waitlisted.length + 1;
+  patient.waitlistAddedAt = new Date().toISOString();
+  patient.queueStatus = "Registered";
+  patient.history = patient.history || {};
+  patient.history.registration = patient.history.registration || [];
+  patient.history.registration.push({
+    date: new Date().toISOString(),
+    note: `Added to fictional waitlist at position ${patient.waitlistPosition} for ${patient.department}.`
+  });
+  logActivity("Waitlisted", patient, `Position ${patient.waitlistPosition}; camp ${state.campName}.`);
+  return patient;
 }
 
 function getAiAggregateData() {
   const medicines = getDemoMedicines();
-  const waiting = patientDatabase.filter((patient) => !patient.queueStatus || patient.queueStatus === "Waiting").length;
-  const consultations = patientDatabase.filter((patient) => (patient.history?.consultation || []).length).length;
-  const referrals = patientDatabase.filter((patient) => (patient.history?.referral || []).length).length;
   return {
     registrations: patientDatabase.length,
-    waiting,
-    consultations,
-    referrals,
+    waiting: patientDatabase.filter((patient) => (!patient.queueStatus || patient.queueStatus === "Waiting") && !patient.waitlisted).length,
+    consultations: patientDatabase.filter((patient) => (patient.history?.consultation || []).length).length,
+    referrals: patientDatabase.filter((patient) => (patient.history?.referral || []).length).length,
     lowStock: medicines.filter((medicine) => medicine.quantity <= medicine.minimum).length,
-    departments: patientDatabase.reduce((groups, patient) => { const department = patient.department || "General Check-up"; groups[department] = (groups[department] || 0) + 1; return groups; }, {})
+    departments: patientDatabase.reduce((groups, patient) => {
+      const department = patient.department || "General Check-up";
+      groups[department] = (groups[department] || 0) + 1;
+      return groups;
+    }, {})
   };
 }
 
@@ -877,6 +1152,66 @@ function renderDashboardSummary() {
   if (recommendedBanner) {
     recommendedBanner.textContent = getRecommendedAction();
   }
+  renderDashboardAlerts();
+}
+
+function renderDashboardAlerts() {
+  const alertsNode = document.getElementById("dashboardAlerts");
+  const countNode = document.getElementById("dashboardAlertCount");
+  if (!alertsNode) return;
+
+  const waiting = patientDatabase.filter((patient) => (!patient.queueStatus || patient.queueStatus === "Waiting") && !patient.waitlisted).length;
+  const lowStock = getDemoMedicines().filter((medicine) => medicine.quantity <= medicine.minimum).length;
+  const capacity = getCapacityState();
+  const activeCampPatients = patientDatabase.filter((patient) => !TERMINAL_QUEUE_STATUSES.has(patient.queueStatus) && !patient.waitlisted);
+  const waitlistCount = patientDatabase.filter((patient) => patient.waitlisted && !TERMINAL_QUEUE_STATUSES.has(patient.queueStatus)).length;
+  const alerts = [];
+
+  if (waiting >= 5) {
+    alerts.push({
+      tone: "warning",
+      title: "Queue backlog",
+      description: `${waiting} fictional patients are waiting. Review queue staffing and handoffs.`,
+      route: "queue",
+      action: "Review queue"
+    });
+  }
+
+  if (lowStock > 0) {
+    alerts.push({
+      tone: "warning",
+      title: "Medicine stock needs attention",
+      description: `${lowStock} inventory item${lowStock === 1 ? "" : "s"} at or below the demo minimum.`,
+      route: "medicines",
+      action: "Review inventory"
+    });
+  }
+
+  if (waitlistCount > 0 || activeCampPatients.length / capacity.capacity >= 0.8) {
+    alerts.push({
+      tone: "info",
+      title: waitlistCount > 0 ? "Camp capacity reached" : "Camp nearing capacity",
+      description: waitlistCount > 0
+        ? `${waitlistCount} fictional registration${waitlistCount === 1 ? " is" : "s are"} on the waitlist.`
+        : `${activeCampPatients.length} of ${capacity.capacity} camp places are in use.`,
+      route: "capacity",
+      action: "Review capacity"
+    });
+  }
+
+  if (countNode) {
+    countNode.textContent = alerts.length ? `${alerts.length} item${alerts.length === 1 ? "" : "s"} to review` : "All clear";
+    countNode.className = `status-badge ${alerts.length ? "warning" : "success"}`;
+  }
+
+  alertsNode.innerHTML = alerts.length
+    ? alerts.map((alert) => `
+      <article class="dashboard-alert-item ${alert.tone}">
+        <div><strong>${alert.title}</strong><p>${alert.description}</p></div>
+        <a class="button button-outline small-button" href="#/${alert.route}">${alert.action}</a>
+      </article>
+    `).join("")
+    : `<div class="dashboard-alert-clear"><span aria-hidden="true">✓</span><p>No queue, stock, or capacity alerts need attention right now.</p></div>`;
 }
 
 function renderQueue() {
@@ -930,6 +1265,52 @@ function renderReports() {
   patientDatabase.forEach((patient) => { groups[patient.gender] = (groups[patient.gender] || 0) + 1; });
   const max = Math.max(1, ...Object.values(groups));
   bars.innerHTML = Object.entries(groups).map(([label, value]) => `<div class="report-bar-row"><span>${label}</span><div><i style="width:${(value / max) * 100}%"></i></div><strong>${value}</strong></div>`).join("");
+}
+
+function buildAggregateReportCsv() {
+  const capacity = getCapacityState();
+  const medicines = getDemoMedicines();
+  const lowStockCount = medicines.filter((medicine) => medicine.quantity <= medicine.minimum).length;
+  const stages = [
+    ["Screenings", "screening"],
+    ["Consultations", "consultation"],
+    ["Medicine records", "medicine"],
+    ["Referrals", "referral"],
+    ["Follow-ups", "followup"]
+  ];
+  const rows = [
+    ["Section", "Metric", "Value"],
+    ["Report", "Generated at", new Date().toISOString()],
+    ["Camp", "Name", capacity.campName],
+    ["Camp", "Date", capacity.date],
+    ["Overview", "Registered patients", patientDatabase.length],
+    ...stages.map(([label, key]) => [
+      "Care activity",
+      label,
+      patientDatabase.filter((patient) => Array.isArray(patient.history?.[key]) && patient.history[key].length > 0).length
+    ]),
+    ["Inventory", "Items at or below minimum", lowStockCount],
+    ["Inventory", "Tracked medicine items", medicines.length]
+  ];
+
+  const departments = new Map();
+  const queueStatuses = new Map();
+  patientDatabase.forEach((patient) => {
+    const department = patient.department || "General Check-up";
+    const status = patient.queueStatus || "Waiting";
+    departments.set(department, (departments.get(department) || 0) + 1);
+    queueStatuses.set(status, (queueStatuses.get(status) || 0) + 1);
+  });
+
+  [...departments.entries()].sort(([left], [right]) => left.localeCompare(right)).forEach(([department, count]) => {
+    rows.push(["Department volume", department, count]);
+  });
+  [...queueStatuses.entries()].sort(([left], [right]) => left.localeCompare(right)).forEach(([status, count]) => {
+    rows.push(["Queue status", status, count]);
+  });
+
+  const escapeCsvValue = (value) => `"${String(value).replace(/"/g, '""')}"`;
+  return rows.map((row) => row.map(escapeCsvValue).join(",")).join("\r\n");
 }
 
 function renderOperationsPanels() {
@@ -990,7 +1371,7 @@ function buildQrUrl(payload) {
   return `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(payload)}`;
 }
 
-function createPatientRecord({ name, age, gender, campName, registrationDate }, existingRecords = []) {
+function createPatientRecord({ name, age, gender, campName, registrationDate, department = "General Check-up", campId = DEFAULT_CAMP_ID }, existingRecords = []) {
   const patientId = generatePatientId(existingRecords);
   const normalizedRegistrationDate = registrationDate || new Date().toISOString();
   const qrPayload = buildQrPayload(patientId);
@@ -1000,6 +1381,8 @@ function createPatientRecord({ name, age, gender, campName, registrationDate }, 
     name,
     age: Number(age),
     gender,
+    department,
+    campId,
     campName: campName || DEFAULT_CAMP_NAME,
     registrationDate: normalizedRegistrationDate,
     qrPayload,
@@ -1021,6 +1404,16 @@ function createPatientRecord({ name, age, gender, campName, registrationDate }, 
 function formatDate(dateValue) {
   const date = new Date(dateValue);
   return Number.isNaN(date.getTime()) ? "Unknown date" : date.toLocaleString();
+}
+
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, (character) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[character]);
 }
 
 function getTodayKey() {
@@ -1458,63 +1851,69 @@ function parseQrPayload(rawValue) {
 
 function renderPatientHistory(patient) {
   const historySections = [
+    { key: "registration", label: "Registered" },
     { key: "screening", label: "Screening" },
     { key: "consultation", label: "Consultation" },
     { key: "medicine", label: "Medicine" },
     { key: "referral", label: "Referral" },
     { key: "followup", label: "Follow-up" }
   ];
-
-  const listHtml = historySections
-    .map(({ key, label }) => {
-      const items = patient.history[key] || [];
-      const content = items.length
-        ? items
-            .map(
-              (item) => `
-                <li>
-                  <span>${formatDate(item.date || item.timestamp || patient.registrationDate)}</span>
-                  <strong>${item.note || label}</strong>
-                </li>
-              `
-            )
-            .join("")
-        : `<li class="empty-history">No ${label.toLowerCase()} records yet.</li>`;
-
-      return `
-        <div class="history-group">
-          <h4>${label}</h4>
-          <ul>${content}</ul>
-        </div>
-      `;
-    })
-    .join("");
+  const history = patient.history || {};
+  const timelineItems = historySections.flatMap(({ key, label }) => {
+    const entries = Array.isArray(history[key]) ? history[key] : [];
+    return entries.map((entry) => ({
+      label,
+      date: entry.date || entry.timestamp || patient.registrationDate,
+      note: entry.note || `${label} recorded.`
+    }));
+  });
+  if (!timelineItems.some((entry) => entry.label === "Registered")) {
+    timelineItems.push({
+      label: "Registered",
+      date: patient.registrationDate,
+      note: "Patient record created and QR pass generated."
+    });
+  }
+  timelineItems.sort((left, right) => new Date(left.date).getTime() - new Date(right.date).getTime());
+  const timelineHtml = timelineItems.map((entry) => `
+    <li class="patient-timeline-item">
+      <span class="patient-timeline-marker" aria-hidden="true"></span>
+      <div>
+        <div class="patient-timeline-heading"><strong>${escapeHtml(entry.label)}</strong><time>${escapeHtml(formatDate(entry.date))}</time></div>
+        <p>${escapeHtml(entry.note)}</p>
+      </div>
+    </li>
+  `).join("");
 
   return `
     <div class="profile-summary">
       <div>
         <p class="profile-label">Patient</p>
-        <h3>${patient.name}</h3>
+        <h3>${escapeHtml(patient.name)}</h3>
       </div>
-      <span class="status-badge success">${patient.patientId}</span>
+      <span class="status-badge success">${escapeHtml(patient.patientId)}</span>
     </div>
 
     <div class="profile-stats">
-      <div><span>Age</span><strong>${patient.age}</strong></div>
-      <div><span>Gender</span><strong>${patient.gender}</strong></div>
-      <div><span>Camp</span><strong>${patient.campName}</strong></div>
-      <div><span>Registered</span><strong>${formatDate(patient.registrationDate)}</strong></div>
+      <div><span>Age</span><strong>${escapeHtml(patient.age)}</strong></div>
+      <div><span>Gender</span><strong>${escapeHtml(patient.gender)}</strong></div>
+      <div><span>Camp</span><strong>${escapeHtml(patient.campName)}</strong></div>
+      <div><span>Registered</span><strong>${escapeHtml(formatDate(patient.registrationDate))}</strong></div>
     </div>
 
     <div class="quick-actions">
-      <button class="button button-primary small-button" type="button" data-quick-action="screening" data-id="${patient.patientId}">Start Screening</button>
-      <button class="button button-primary small-button" type="button" data-quick-action="consultation" data-id="${patient.patientId}">Consultation</button>
-      <button class="button button-primary small-button" type="button" data-quick-action="medicine" data-id="${patient.patientId}">Prescription</button>
-      <button class="button button-primary small-button" type="button" data-quick-action="referral" data-id="${patient.patientId}">Referral</button>
-      <button class="button button-primary small-button" type="button" data-quick-action="followup" data-id="${patient.patientId}">Follow-up</button>
+      <button class="button button-primary small-button" type="button" data-quick-action="screening" data-id="${escapeHtml(patient.patientId)}">Start Screening</button>
+      <button class="button button-primary small-button" type="button" data-quick-action="consultation" data-id="${escapeHtml(patient.patientId)}">Consultation</button>
+      <button class="button button-primary small-button" type="button" data-quick-action="medicine" data-id="${escapeHtml(patient.patientId)}">Prescription</button>
+      <button class="button button-primary small-button" type="button" data-quick-action="referral" data-id="${escapeHtml(patient.patientId)}">Referral</button>
+      <button class="button button-primary small-button" type="button" data-quick-action="followup" data-id="${escapeHtml(patient.patientId)}">Follow-up</button>
     </div>
 
-    <div class="history-list">${listHtml}</div>
+    <section class="patient-timeline" aria-label="Patient visit timeline">
+      <h4>Visit timeline</h4>
+      <ol>${timelineHtml}</ol>
+    </section>
+    <p class="medical-notice">Current queue status: <strong>${escapeHtml(patient.queueStatus || "Waiting")}</strong>. Timeline events are demo records only.</p>
   `;
 }
 
@@ -1696,19 +2095,20 @@ function bindOperations() {
   });
   document.getElementById("exportDataButton")?.addEventListener("click", () => downloadJson("smartcare-demo-data.json", { patients: patientDatabase, medicines: getDemoMedicines() }));
   document.getElementById("exportReportButton")?.addEventListener("click", () => {
-    const rows = [["Patient count", patientDatabase.length], ["Screenings", patientDatabase.filter((patient) => (patient.history?.screening || []).length).length], ["Consultations", patientDatabase.filter((patient) => (patient.history?.consultation || []).length).length], ["Referrals", patientDatabase.filter((patient) => (patient.history?.referral || []).length).length]];
-    const csv = rows.map((row) => row.join(",")).join("\n");
+    const csv = buildAggregateReportCsv();
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
     link.download = "smartcare-aggregate-report.csv";
     link.click();
-    URL.revokeObjectURL(url);
+    window.setTimeout(() => URL.revokeObjectURL(url), 0);
+    showToast("Aggregate camp report exported. No patient names or IDs are included.", "success");
   });
   document.getElementById("reduceMotionToggle")?.addEventListener("change", (event) => {
     document.body.classList.toggle("reduce-motion", event.target.checked);
     localStorage.setItem("smartcareReduceMotion", event.target.checked ? "true" : "false");
+    syncCustomCursorMode();
   });
   const reduceMotionToggle = document.getElementById("reduceMotionToggle");
   if (reduceMotionToggle) {
@@ -1751,6 +2151,50 @@ function syncDemoData() {
     if (syncNowButton) syncNowButton.disabled = false;
     showToast("Fictional demo data synchronized locally.", "success");
   }, 700);
+}
+
+function syncCustomCursorMode() {
+  const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const enabled = finePointer && !reducedMotion && !document.body.classList.contains("reduce-motion");
+  document.body.classList.toggle("custom-cursor-enabled", enabled);
+  if (!enabled) {
+    document.getElementById("customCursor")?.classList.remove("visible");
+  }
+}
+
+function initCustomCursor() {
+  const cursor = document.getElementById("customCursor");
+  if (!cursor) return;
+
+  syncCustomCursorMode();
+  window.matchMedia("(hover: hover) and (pointer: fine)").addEventListener("change", syncCustomCursorMode);
+  window.matchMedia("(prefers-reduced-motion: reduce)").addEventListener("change", syncCustomCursorMode);
+  document.getElementById("reduceMotionToggle")?.addEventListener("change", syncCustomCursorMode);
+
+  window.addEventListener("pointermove", (event) => {
+    if (!document.body.classList.contains("custom-cursor-enabled") || event.pointerType !== "mouse") return;
+
+    const target = event.target instanceof Element ? event.target : null;
+    const textControl = target?.closest('input:not([type="button"]):not([type="submit"]):not([type="reset"]), textarea, select, [contenteditable="true"]');
+    const interactive = target?.closest('a, button, [role="button"], summary, [data-cursor-hover]');
+    cursor.style.transform = `translate3d(${event.clientX}px, ${event.clientY}px, 0) translate(-50%, -50%)`;
+    cursor.classList.toggle("is-text", Boolean(textControl));
+    cursor.classList.toggle("is-hover", Boolean(interactive));
+    cursor.classList.add("visible");
+    document.body.classList.remove("cursor-keyboard-mode");
+  });
+
+  window.addEventListener("pointerout", (event) => {
+    if (!event.relatedTarget) cursor.classList.remove("visible");
+  });
+  window.addEventListener("blur", () => cursor.classList.remove("visible"));
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Tab") {
+      document.body.classList.add("cursor-keyboard-mode");
+      cursor.classList.remove("visible");
+    }
+  });
 }
 
 function initAppShell() {
@@ -1834,8 +2278,8 @@ function resolveTheme(preference) {
   return preference === "dark" ? "dark" : "light";
 }
 
-function applyTheme(preference = "light", notify = false) {
-  const normalized = ["light", "dark", "system"].includes(preference) ? preference : "light";
+function applyTheme(preference = "dark", notify = false) {
+  const normalized = ["light", "dark", "system"].includes(preference) ? preference : "dark";
   const resolved = resolveTheme(normalized);
   document.documentElement.dataset.themePreference = normalized;
   document.documentElement.dataset.theme = resolved;
@@ -1845,6 +2289,8 @@ function applyTheme(preference = "light", notify = false) {
   const label = normalized === "light" ? "☀️ Theme: Light" : normalized === "dark" ? "🌙 Theme: Dark" : "🖥 Theme: System";
   if (themeToggle) themeToggle.textContent = label;
   if (mobileThemeToggle) mobileThemeToggle.textContent = label;
+  if (document.getElementById("portalThemeToggle")) document.getElementById("portalThemeToggle").textContent = normalized === "light" ? "☀️ Theme" : normalized === "dark" ? "🌙 Theme" : "🖥 Theme";
+  if (document.getElementById("portalHeaderThemeToggle")) document.getElementById("portalHeaderThemeToggle").textContent = normalized === "light" ? "☀️" : normalized === "dark" ? "🌙" : "🖥";
   if (themePreferenceSelect) themePreferenceSelect.value = normalized;
   const metaTheme = document.querySelector("meta[name='theme-color']");
   if (metaTheme) metaTheme.content = resolved === "dark" ? "#0b1520" : "#123b63";
@@ -1852,7 +2298,7 @@ function applyTheme(preference = "light", notify = false) {
 }
 
 function cycleTheme() {
-  const current = localStorage.getItem("smartcareTheme") || "light";
+  const current = localStorage.getItem("smartcareTheme") || "dark";
   const next = current === "light" ? "dark" : current === "dark" ? "system" : "light";
   applyTheme(next, true);
 }
@@ -1904,6 +2350,12 @@ function setLanguage(lang) {
   localStorage.setItem("smartcareLanguage", lang);
   if (languageToggle) {
     languageToggle.textContent = lang === "en" ? "Kannada" : lang === "kn" ? "हिंदी" : "English";
+  }
+  if (document.getElementById("portalLanguageToggle")) {
+    document.getElementById("portalLanguageToggle").textContent = lang === "en" ? "English" : lang === "kn" ? "ಕನ್ನಡ" : "हिंदी";
+  }
+  if (document.getElementById("portalHeaderLanguageToggle")) {
+    document.getElementById("portalHeaderLanguageToggle").textContent = lang === "en" ? "EN" : lang === "kn" ? "ಕನ" : "हि";
   }
 }
 
@@ -2469,6 +2921,8 @@ if (patientRegistrationForm) {
         name: String(formData.get("name") || "").trim(),
         age: Number(formData.get("age") || 0),
         gender: String(formData.get("gender") || "").trim(),
+        department: String(formData.get("department") || "General Check-up"),
+        campId: getCapacityState().campId,
         campName: String(formData.get("campName") || DEFAULT_CAMP_NAME).trim(),
         registrationDate: new Date().toISOString()
       },
@@ -2513,6 +2967,8 @@ if (qrImageInput) {
 
 if (themeToggle) themeToggle.addEventListener("click", cycleTheme);
 if (mobileThemeToggle) mobileThemeToggle.addEventListener("click", cycleTheme);
+if (document.getElementById("portalThemeToggle")) document.getElementById("portalThemeToggle").addEventListener("click", cycleTheme);
+if (document.getElementById("portalHeaderThemeToggle")) document.getElementById("portalHeaderThemeToggle").addEventListener("click", cycleTheme);
 if (themePreferenceSelect) {
   themePreferenceSelect.addEventListener("change", (event) => applyTheme(event.target.value, true));
 }
@@ -2521,11 +2977,25 @@ document.querySelectorAll("[data-theme-choice]").forEach((button) => {
 });
 const systemThemeQuery = window.matchMedia("(prefers-color-scheme: dark)");
 systemThemeQuery.addEventListener?.("change", () => {
-  if ((localStorage.getItem("smartcareTheme") || "light") === "system") applyTheme("system");
+  if ((localStorage.getItem("smartcareTheme") || "dark") === "system") applyTheme("system");
 });
 
 if (languageToggle) {
   languageToggle.addEventListener("click", () => {
+    const current = localStorage.getItem("smartcareLanguage") || "en";
+    const next = current === "en" ? "kn" : current === "kn" ? "hi" : "en";
+    setLanguage(next);
+  });
+}
+if (document.getElementById("portalLanguageToggle")) {
+  document.getElementById("portalLanguageToggle").addEventListener("click", () => {
+    const current = localStorage.getItem("smartcareLanguage") || "en";
+    const next = current === "en" ? "kn" : current === "kn" ? "hi" : "en";
+    setLanguage(next);
+  });
+}
+if (document.getElementById("portalHeaderLanguageToggle")) {
+  document.getElementById("portalHeaderLanguageToggle").addEventListener("click", () => {
     const current = localStorage.getItem("smartcareLanguage") || "en";
     const next = current === "en" ? "kn" : current === "kn" ? "hi" : "en";
     setLanguage(next);
@@ -2555,7 +3025,7 @@ window.addEventListener("scroll", updateReadingProgress);
 window.addEventListener("load", () => {
   updateReadingProgress();
   loadQuote();
-  const savedTheme = localStorage.getItem("smartcareTheme") || "light";
+  const savedTheme = localStorage.getItem("smartcareTheme") || "dark";
   applyTheme(savedTheme);
   const savedLanguage = localStorage.getItem("smartcareLanguage") || "en";
   setLanguage(savedLanguage);
@@ -2582,10 +3052,32 @@ bindWorkflow();
 bindAiAssistant();
 bindPresentationMode();
 bindFloatingAiAssistant();
+bind3DEnhancements();
 refreshCurrentPatientData();
 setScannerState("idle", "Awaiting QR input.");
 refreshYashAiProviderStatus();
 
 syncAuthState();
 initAppShell();
+initCustomCursor();
 initStartupScreen();
+
+function bind3DEnhancements() {
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches || document.body.classList.contains("reduce-motion");
+  if (reducedMotion) return;
+
+  document.querySelectorAll(".overview-card, .capability-card, .showcase-card, .stat-card, .panel-card, .workflow-item, .feature-card").forEach((element) => {
+    element.style.transformStyle = "preserve-3d";
+    element.addEventListener("pointermove", (event) => {
+      const rect = element.getBoundingClientRect();
+      const offsetX = (event.clientX - rect.left) / rect.width;
+      const offsetY = (event.clientY - rect.top) / rect.height;
+      const rotateY = (offsetX - 0.5) * 8;
+      const rotateX = (0.5 - offsetY) * 8;
+      element.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
+    });
+    element.addEventListener("pointerleave", () => {
+      element.style.transform = "";
+    });
+  });
+}
