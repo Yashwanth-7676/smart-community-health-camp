@@ -9,12 +9,17 @@
     />
     <meta name="theme-color" content="#080d18" />
     <link rel="manifest" href="manifest.json" />
-    <link rel="icon" href="icon.svg?v=20261003-premium" type="image/svg+xml" />
+    <link rel="icon" href="icon.svg" type="image/svg+xml" />
     <title>SmartCare Camp</title>
-    <script src="theme-init.js?v=20261003-premium4"></script>
-    <link rel="stylesheet" href="styles.css?v=20261003-premium4" />
-    <script src="script.js?v=20261003-premium4" defer></script>
-    <script src="hero-3d.js?v=20261003-premium4" type="module"></script>
+    <script src="theme-init.js?v=1791107933"></script>
+    <link rel="stylesheet" href="styles.css?v=1791107933" />
+    <script src="script.js?v=1791107933" defer></script>
+    <script src="hero-3d.js?v=1791107933" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet" />
+    <script type="module" src="src/js/theme-toggle.js"></script>
+        <script type="module" src="src/js/theme-customizer.js"></script>
   </head>
   <body data-theme="dark" data-theme-preference="dark">
     <header class="site-header">
@@ -36,14 +41,17 @@
         <a href="#capabilities">Capabilities</a>
         <a href="#workflow">Workflow</a>
         <a href="#about">About</a>
+        <a href="#testimonials">Testimonials</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
       </nav>
 
       <div class="header-actions">
         <button class="theme-switch" id="themeToggle" type="button" aria-label="Change theme">☀️ Theme: Light</button>
         <button class="lang-switch" id="languageToggle" type="button" aria-label="Toggle language">Kannada</button>
         <button class="button button-ghost small-button install-button" id="installAppButton" type="button" hidden>Install app</button>
-        <a href="#staff-login" class="button button-ghost">Staff sign in</a>
-        <a href="#staff-login" class="button button-primary">Open portal <span>→</span></a>
+        <a href="#staff-login" data-auth-open="login" class="button button-ghost">Sign in</a>
+        <a href="#staff-login" data-auth-open="login" class="button button-primary">Open portal <span>→</span></a>
       </div>
 
       <button class="menu-button" id="menuButton" aria-label="Open menu">☰</button>
@@ -53,14 +61,17 @@
       <a href="#capabilities">Capabilities</a>
       <a href="#workflow">Workflow</a>
       <a href="#about">About</a>
-      <a href="#staff-login">Staff sign in</a>
+      <a href="#testimonials">Testimonials</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+      <a href="#staff-login" data-auth-open="login">Sign in</a>
       <button class="theme-switch mobile-theme-switch" id="mobileThemeToggle" type="button" aria-label="Change theme">☀️ Theme: Light</button>
     </div>
 
     <div class="app-status-bar" id="appStatusBar" role="status" aria-live="polite">
       <span id="connectionStatus" class="connection-status online"><i></i> Online</span>
-      <span id="syncStatus">Demo data saved locally</span>
-      <button id="syncNowButton" class="text-button" type="button">Sync demo data</button>
+      <span id="syncStatus">Workspace data saved on this device</span>
+      <button id="syncNowButton" class="text-button" type="button">Save workspace</button>
     </div>
 
     <div id="appStartup" class="app-startup" aria-hidden="true">
@@ -74,17 +85,10 @@
       <p class="eyebrow-text">SmartCare Camp</p>
       <h2>Organize camps. Improve care.</h2>
       <div class="startup-loader"><span></span></div>
-      <p id="startupStatus">Loading local demo workspace...</p>
+      <p id="startupStatus">Loading your workspace...</p>
     </div>
 
-    <section id="appErrorPanel" class="app-error-panel" hidden role="alert" aria-live="assertive">
-      <div class="app-error-card">
-        <p class="eyebrow-text">Demo workspace notice</p>
-        <h2>SmartCare needs a quick refresh</h2>
-        <p id="appErrorMessage">The local demo encountered an unexpected problem. Your fictional data was not sent anywhere.</p>
-        <a id="appErrorRetry" class="button button-primary" href="./index.html?retry=1">Reload workspace</a>
-      </div>
-    </section>
+    <!-- appErrorPanel removed -->
 
     <main>
       <section class="hero">
@@ -108,18 +112,21 @@
 
             <div class="hero-buttons">
               <a href="#capabilities" class="button button-primary button-large">
-                Explore Demo <span>→</span>
+                Explore features <span>→</span>
               </a>
-              <a href="#staff-login" class="button button-outline button-large">
-                Login
+              <a href="#staff-login" data-auth-open="login" class="button button-outline button-large">
+                Sign in
               </a>
               <button type="button" class="button button-outline button-large" data-poster-open="true">
                 View Health Camp Poster
               </button>
+              <a href="./zero-gravity-hero.html" target="_blank" rel="noopener noreferrer" class="button button-ghost button-large">
+                3D Zero-G Experience ✦
+              </a>
             </div>
 
             <div class="trust-points" aria-label="Trust indicators">
-              <span>✓ Fictional Demo Data</span>
+              <span>✓ Private workspace</span>
               <span>✓ English and Kannada</span>
               <span>✓ Role-Based Workflow</span>
               <span>✓ Mobile Friendly</span>
@@ -296,7 +303,7 @@
           <div class="dark-copy">
             <p>
               <strong>For students.</strong>
-              Learn how a community care operation works with a safe, fictional dataset.
+              Manage community care operations in one organized workspace.
             </p>
 
             <p>
@@ -426,9 +433,9 @@
           <button class="carousel-btn prev" type="button" aria-label="Previous slide">‹</button>
           <div class="carousel-viewport">
             <div class="carousel-track">
-              <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1200&q=80" alt="Doctors at a community clinic" />
-              <img src="https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&w=1200&q=80" alt="Medical consultation" />
-              <img src="https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=1200&q=80" alt="Community care" />
+              <img src="./gallery-clinic.svg" alt="Illustration of a clinician reviewing a community health dashboard" loading="lazy" decoding="async" />
+              <img src="./gallery-consultation.svg" alt="Illustration of a doctor consulting with a patient" loading="lazy" decoding="async" />
+              <img src="./gallery-community.svg" alt="Illustration of a local health clinic and community" loading="lazy" decoding="async" />
             </div>
           </div>
           <button class="carousel-btn next" type="button" aria-label="Next slide">›</button>
@@ -441,19 +448,37 @@
         </div>
 
         <div class="gallery-grid">
-          <button class="gallery-item" type="button" data-full-image="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1200&q=80">
-            <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=900&q=80" alt="Community care" />
+          <button class="gallery-item" type="button" data-full-image="./gallery-clinic.svg">
+            <img src="./gallery-clinic.svg" alt="Illustration of a clinician reviewing a community health dashboard" loading="lazy" decoding="async" />
           </button>
-          <button class="gallery-item" type="button" data-full-image="https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&w=1200&q=80">
-            <img src="https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&w=900&q=80" alt="Health camp support" />
+          <button class="gallery-item" type="button" data-full-image="./gallery-consultation.svg">
+            <img src="./gallery-consultation.svg" alt="Illustration of a doctor consulting with a patient" loading="lazy" decoding="async" />
           </button>
-          <button class="gallery-item" type="button" data-full-image="https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=1200&q=80">
-            <img src="https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=900&q=80" alt="Care coordination" />
+          <button class="gallery-item" type="button" data-full-image="./gallery-community.svg">
+            <img src="./gallery-community.svg" alt="Illustration of a local health clinic and community" loading="lazy" decoding="async" />
           </button>
         </div>
       </section>
 
-      <section class="section faq-section reveal">
+      <section class="section testimonials-section reveal" id="testimonials">
+        <div class="section-heading narrow">
+          <p class="eyebrow-text">Field Perspectives</p>
+          <h2>Trusted by health camp coordinators</h2>
+          <p>Real experiences from doctors, volunteers, and organizers on the ground.</p>
+        </div>
+        <div class="testimonials-grid"></div>
+      </section>
+
+      <section class="section pricing-section reveal" id="pricing">
+        <div class="section-heading narrow">
+          <p class="eyebrow-text">Accessible Deployment</p>
+          <h2>Transparent, community-first plans</h2>
+          <p>Empowering local camps of any size with reliable offline-first tools.</p>
+        </div>
+        <div class="pricing-grid"></div>
+      </section>
+
+      <section class="section faq-section reveal" id="faq">
         <div class="section-heading narrow">
           <p class="eyebrow-text">FAQ</p>
           <h2>Frequently asked questions.</h2>
@@ -579,7 +604,6 @@
 
           <div class="portal-panels">
             <div class="portal-panel active" id="dashboard-panel">
-          <div class="demo-mode-banner"><strong>DEMO MODE</strong><span>Fictional records are stored in this browser only. Do not use real health information.</span></div>
           <div class="dashboard-action-row">
             <button id="continueWorkflowButton" class="button button-primary small-button" type="button">Continue Workflow</button>
             <button id="resumeLastActivityButton" class="button button-ghost small-button" type="button">Resume Last Activity</button>
@@ -595,12 +619,12 @@
             <div id="dashboardAlerts" class="dashboard-alerts" aria-live="polite"></div>
           </section>
           <div class="panel-card yash-ai-summary-card">
-            <div class="panel-header"><div><p class="eyebrow-text">YASH AI</p><h3>Your Smart Community Health Camp Assistant</h3></div><span id="dashboardAiStatus" class="status-badge success">Demo Mode</span></div>
-            <p>Get a fictional, aggregate-only operational summary with clear next steps for the camp team.</p>
+            <div class="panel-header"><div><p class="eyebrow-text">YASH AI</p><h3>Your Smart Community Health Camp Assistant</h3></div><span id="dashboardAiStatus" class="status-badge success">Local mode</span></div>
+            <p>Get an aggregate operational summary with clear next steps for the camp team.</p>
             <div class="yash-ai-summary-actions"><button id="dashboardAskAiButton" class="button button-primary small-button" type="button">Ask Yash AI</button><button id="dashboardSummarizeAiButton" class="button button-outline small-button" type="button">Summarize camp</button></div>
           </div>
           <div class="panel-card role-dashboard-card">
-            <div class="panel-header"><div><p class="eyebrow-text">Role-aware workspace</p><h3 id="roleDashboardTitle">Operations overview</h3></div><span class="status-badge success" id="roleAccessBadge">Local demo access</span></div>
+            <div class="panel-header"><div><p class="eyebrow-text">Role-aware workspace</p><h3 id="roleDashboardTitle">Operations overview</h3></div><span class="status-badge success" id="roleAccessBadge">Workspace access</span></div>
             <div id="roleDashboardContent" class="role-dashboard-content"></div>
           </div>
         </div>
@@ -616,11 +640,11 @@
 
         <div class="portal-panel" id="workflow-panel">
           <div class="panel-card workflow-app-card">
-              <div class="panel-header"><div><p class="eyebrow-text">Guided application workflow</p><h3>Complete a camp visit step by step</h3></div><div class="panel-header-actions"><span class="status-badge success" id="workflowProgressLabel">0 of 15 complete</span><button id="openCapacityButton" class="button button-outline small-button" type="button">Manage capacity</button></div></div>
+              <div class="panel-header"><div><p class="eyebrow-text">Guided camp workflow</p><h3>Complete a camp visit step by step</h3></div><div class="panel-header-actions"><span class="status-badge success" id="workflowProgressLabel">0 of 15 complete</span><button id="openCapacityButton" class="button button-outline small-button" type="button">Manage capacity</button></div></div>
             <div class="workflow-progress-track"><span id="workflowProgressBar"></span></div>
             <div class="workflow-layout-app">
               <nav class="workflow-step-list" id="workflowStepList" aria-label="Workflow steps"></nav>
-              <section class="workflow-step-detail" aria-live="polite"><span id="workflowStepNumber" class="workflow-step-number">Step 1</span><h3 id="workflowStepTitle">Create or select camp</h3><p id="workflowStepDescription">Start with a fictional camp record and choose the current event for this demonstration.</p><div class="workflow-data-note" id="workflowDataNote">No demo record created for this step yet.</div><div class="workflow-actions"><button id="workflowBackButton" class="button button-ghost" type="button">Back</button><button id="workflowDraftButton" class="button button-outline" type="button">Save draft</button><button id="workflowNextButton" class="button button-primary" type="button">Complete step</button></div><button id="resumeWorkflowButton" class="text-button" type="button">Resume last workflow state</button></section>
+              <section class="workflow-step-detail" aria-live="polite"><span id="workflowStepNumber" class="workflow-step-number">Step 1</span><h3 id="workflowStepTitle">Create or select camp</h3><p id="workflowStepDescription">Start with a camp record and choose the current event.</p><div class="workflow-data-note" id="workflowDataNote">No record created for this step yet.</div><div class="workflow-actions"><button id="workflowBackButton" class="button button-ghost" type="button">Back</button><button id="workflowDraftButton" class="button button-outline" type="button">Save draft</button><button id="workflowNextButton" class="button button-primary" type="button">Complete step</button></div><button id="resumeWorkflowButton" class="text-button" type="button">Resume last workflow state</button></section>
             </div>
           </div>
         </div>
@@ -628,7 +652,7 @@
         <div class="portal-panel" id="capacity-panel">
           <div class="panel-card">
             <div class="panel-header"><div><p class="eyebrow-text">Camp planning</p><h3>Capacity and waitlist</h3></div><span class="status-badge success">Fictional planning data</span></div>
-            <p class="medical-notice">Capacity controls are for this browser demo only. They coordinate fictional registrations and do not provide medical or clinical decisions.</p>
+            <p class="medical-notice">Capacity is saved on this device. These tools support operations and do not provide medical or clinical decisions.</p>
             <form id="capacityForm" class="capacity-form">
               <div class="field-grid">
                 <label>Camp name<input id="campCapacityName" type="text" required /></label>
@@ -739,7 +763,7 @@
             </div>
           </div>
           <div class="panel-card">
-            <div class="panel-header"><div><p class="eyebrow-text">Audit trail</p><h3>Recent check-in activity</h3></div><span class="status-badge success">Local demo log</span></div>
+            <div class="panel-header"><div><p class="eyebrow-text">Activity</p><h3>Recent check-in activity</h3></div><span class="status-badge success">Saved on this device</span></div>
             <div id="activityLogList" class="activity-log-list"><div class="empty-state">No check-in activity yet.</div></div>
           </div>
         </div>
@@ -754,7 +778,7 @@
 
         <div class="portal-panel" id="pharmacy-panel">
           <div class="panel-card">
-            <div class="panel-header"><div><p class="eyebrow-text">Medicine operations</p><h3>Inventory and dispensing</h3></div><button id="resetDemoDataButton" class="button button-ghost small-button" type="button">Reset demo data</button></div>
+            <div class="panel-header"><div><p class="eyebrow-text">Medicine operations</p><h3>Inventory and dispensing</h3></div><button id="resetDemoDataButton" class="button button-ghost small-button" type="button">Reset inventory</button></div>
             <div id="inventoryAlerts" class="inventory-alerts"></div>
             <div class="inventory-form-row"><input id="medicineNameInput" type="text" placeholder="Medicine name" aria-label="Medicine name" /><input id="medicineQuantityInput" type="number" min="1" placeholder="Quantity" aria-label="Medicine quantity" /><button id="addMedicineButton" class="button button-primary" type="button">Add stock</button></div>
             <div id="medicineList" class="medicine-list"></div>
@@ -772,22 +796,32 @@
 
         <div class="portal-panel" id="settings-panel">
           <div class="panel-card settings-card">
-            <div class="panel-header"><div><p class="eyebrow-text">Workspace preferences</p><h3>Settings and data controls</h3></div><span class="status-badge warning">Prototype only</span></div>
+            <div class="panel-header"><div><p class="eyebrow-text">Workspace preferences</p><h3>Settings and data controls</h3></div><span class="status-badge success">Personalize</span></div>
             <label class="setting-row"><span><strong>Theme mode</strong><small>Your theme preference is saved on this device.</small></span><select id="themePreferenceSelect" aria-label="Theme mode"><option value="light">☀️ Light</option><option value="dark">🌙 Dark</option><option value="system">🖥 System</option></select></label>
             <div class="theme-preview-grid"><button type="button" class="theme-preview light-preview" data-theme-choice="light"><strong>Light</strong><span>Bright, calm surfaces</span></button><button type="button" class="theme-preview dark-preview" data-theme-choice="dark"><strong>Dark</strong><span>Deep navy surfaces</span></button><button type="button" class="theme-preview system-preview" data-theme-choice="system"><strong>System</strong><span>Follows your device</span></button></div>
-            <label class="setting-row"><span><strong>Reduce motion</strong><small>Use simpler transitions throughout the demo.</small></span><input id="reduceMotionToggle" type="checkbox" /></label>
+            <fieldset class="accent-picker">
+              <legend>Accent color</legend>
+              <p>Choose the highlight color used throughout your workspace.</p>
+              <div class="accent-options" role="group" aria-label="Accent color">
+                <button type="button" data-accent-choice="blue" aria-label="Blue accent" title="Blue"></button>
+                <button type="button" data-accent-choice="violet" aria-label="Violet accent" title="Violet"></button>
+                <button type="button" data-accent-choice="green" aria-label="Green accent" title="Green"></button>
+                <button type="button" data-accent-choice="coral" aria-label="Coral accent" title="Coral"></button>
+              </div>
+            </fieldset>
+            <label class="setting-row"><span><strong>Reduce motion</strong><small>Use simpler transitions throughout your workspace.</small></span><input id="reduceMotionToggle" type="checkbox" /></label>
             <label class="setting-row"><span><strong>High contrast</strong><small>Increase borders and text contrast for readability.</small></span><input id="highContrastToggle" type="checkbox" /></label>
             <label class="setting-row"><span><strong>Large text</strong><small>Increase interface text size on this device.</small></span><input id="largeTextToggle" type="checkbox" /></label>
-            <div class="privacy-notice"><strong>Educational demonstration system.</strong><p>Use fictional data only. This software does not provide medical diagnosis or replace qualified healthcare professionals. localStorage is not suitable for real health records.</p></div>
-            <div class="settings-actions"><button id="exportDataButton" class="button button-outline" type="button">Export demo data</button><button id="resetAllDataButton" class="button button-ghost" type="button">Reset local data</button></div>
+            <div class="privacy-notice"><strong>Privacy and clinical safety</strong><p>Your account and workspace data are stored only in this browser on this device. They are not synced, encrypted, or suitable for sensitive patient records. This software does not provide medical diagnosis or replace qualified healthcare professionals.</p></div>
+            <div class="settings-actions"><button id="exportDataButton" class="button button-outline" type="button">Export workspace data</button><button id="resetAllDataButton" class="button button-ghost" type="button">Reset local data</button></div>
           </div>
         </div>
 
         <div class="portal-panel" id="profile-panel">
           <div class="panel-card profile-panel-card">
-            <div class="profile-identity"><div id="profileAvatar" class="profile-avatar">SC</div><div><p class="eyebrow-text">Authenticated demo profile</p><h3 id="profileName">Staff profile</h3><span id="profileRole" class="status-badge success">Staff</span></div></div>
-            <div class="profile-detail-grid"><div><span>Email</span><strong id="profileEmail">Not signed in</strong></div><div><span>Access</span><strong>Protected local portal</strong></div><div><span>Storage</span><strong>Browser localStorage</strong></div><div><span>Data mode</span><strong>Fictional demonstration</strong></div></div>
-            <p class="medical-notice">This profile is for the college-project demonstration only. Never enter real patient information.</p>
+            <div class="profile-identity"><div id="profileAvatar" class="profile-avatar">SC</div><div><p class="eyebrow-text">Account profile</p><h3 id="profileName">Staff profile</h3><span id="profileRole" class="status-badge success">Staff</span></div></div>
+            <div class="profile-detail-grid"><div><span>Email</span><strong id="profileEmail">Not signed in</strong></div><div><span>Access</span><strong>Device-local workspace</strong></div><div><span>Storage</span><strong>This browser</strong></div><div><span>Sync</span><strong>Not connected</strong></div></div>
+            <p class="medical-notice">This account is stored in this browser and is not a secure, server-backed sign-in. Do not enter sensitive patient information.</p>
           </div>
         </div>
 
@@ -809,16 +843,16 @@
 
     <section class="public-route-view" id="queueDisplayView" hidden>
       <div class="public-queue-shell">
-        <div class="public-route-header"><div><p class="eyebrow-text">SmartCare Camp · Public display</p><h1>Now serving</h1><p>Token numbers and operational stages only. No names or contact details are shown.</p></div><span class="status-badge success">Fictional demo</span></div>
+        <div class="public-route-header"><div><p class="eyebrow-text">SmartCare Camp · Public display</p><h1>Now serving</h1><p>Token numbers and operational stages only. No names or contact details are shown.</p></div><span class="status-badge success">Live queue</span></div>
         <div id="publicQueueSummary" class="public-queue-summary"></div>
         <div id="publicQueueDisplay" class="public-queue-display"></div>
-        <p class="public-route-footnote">This display uses fictional local data. It is not a medical triage or diagnosis screen.</p>
+        <p class="public-route-footnote">This display uses data saved in this browser. It is not a medical triage or diagnosis screen.</p>
       </div>
     </section>
 
     <section class="public-route-view" id="tokenRouteView" hidden>
       <div class="public-token-card">
-        <div class="public-route-header"><div><p class="eyebrow-text">SmartCare Camp · Fictional token</p><h1>Camp token slip</h1><p>Only non-identifying token information is shown.</p></div><span class="status-badge success">Demo mode</span></div>
+        <div class="public-route-header"><div><p class="eyebrow-text">SmartCare Camp · Registration token</p><h1>Camp token slip</h1><p>Only non-identifying token information is shown.</p></div><span class="status-badge success">Registration</span></div>
         <div id="tokenRouteContent" class="token-route-content"></div>
       </div>
     </section>
@@ -831,7 +865,7 @@
     </div>
 
     <div class="future-scope-grid">
-      <div class="future-scope-card"><strong>Secure backend</strong><span>Real authentication and database-backed patient workflows.</span></div>
+      <div class="future-scope-card"><strong>Secure backend</strong><span>Server-backed authentication and protected, shared records.</span></div>
       <div class="future-scope-card"><strong>Cloud sync</strong><span>Offline synchronization and multi-device data updates.</span></div>
       <div class="future-scope-card"><strong>SMS and WhatsApp</strong><span>Patient reminders and operational communication channels.</span></div>
       <div class="future-scope-card"><strong>AI admin assistant</strong><span>Demo AI workflow support only, with human review required.</span></div>
@@ -842,8 +876,8 @@
 
   <footer class="site-footer">
     <p>© 2026 SmartCare Camp</p>
-    <p>Community health operations · Fictional educational data only</p>
-    <p>Educational demonstration system. Use fictional data only. This software does not provide medical diagnosis or replace qualified healthcare professionals.</p>
+    <p>Community health operations · Device-local workspace</p>
+    <p>This software does not provide medical diagnosis or replace qualified healthcare professionals. Device-local browser storage is not suitable for sensitive patient records.</p>
   </footer>
 
   <div id="lightbox" class="lightbox" aria-hidden="true">
@@ -1006,7 +1040,7 @@
         <div>
           <p class="eyebrow-text">CAMP REGISTRATION</p>
           <h2 id="registrationTitle">Register for the health camp</h2>
-          <p class="registration-note">Enter fictional demo details to receive a sample queue token.</p>
+          <p class="registration-note">Complete the form to register for the camp and receive a queue token.</p>
         </div>
       </div>
 
@@ -1050,13 +1084,13 @@
           </label>
         </div>
 
-        <div class="registration-note">Use fictional demo details only.</div>
+        <div class="registration-note">Your registration is saved in this browser on this device.</div>
 
         <label class="consent-box">
           <input type="checkbox" id="campConsent" name="consent" required />
           <span>
-            I confirm this is a demo registration for a fictional community-health event.
-            <span class="helper-note">This prototype uses fictional data only and is not intended for real patient records.</span>
+            I agree to provide these details for camp registration.
+            <span class="helper-note">Data stays in this browser and is not sent to a camp organizer.</span>
           </span>
         </label>
 
@@ -1082,8 +1116,6 @@
       <p class="modal-description">
         Sign in to your account or create a staff profile to access patient records, QR passes, and camp tools.
       </p>
-      <div class="demo-login-warning">These accounts are for local educational demonstration only. Do not use real patient information.</div>
-
       <div class="auth-switcher" role="tablist" aria-label="Authentication mode">
         <button class="auth-switch active" type="button" data-auth-view="login">Login</button>
         <button class="auth-switch" type="button" data-auth-view="signup">Create account</button>
@@ -1091,10 +1123,10 @@
 
       <form id="loginForm" class="auth-form active">
         <label for="email">Staff email</label>
-        <input id="email" type="email" placeholder="name@example.com" required />
+        <input id="email" type="email" placeholder="name@example.com" autocomplete="username" required />
 
         <label for="password">Password</label>
-        <div class="password-field"><input id="password" type="password" placeholder="Enter password" required /><button type="button" class="password-toggle" data-password-target="password" aria-label="Show password">Show</button></div>
+        <div class="password-field"><input id="password" type="password" placeholder="Enter password" autocomplete="current-password" required /><button type="button" class="password-toggle" data-password-target="password" aria-label="Show password">Show</button></div>
 
         <button type="button" class="text-button" id="forgotPasswordButton">Forgot password?</button>
 
@@ -1105,16 +1137,16 @@
 
       <form id="signupForm" class="auth-form">
         <label for="signupName">Full name</label>
-        <input id="signupName" type="text" placeholder="Your full name" required />
+        <input id="signupName" type="text" placeholder="Your full name" autocomplete="name" required />
 
         <label for="signupEmail">Email</label>
-        <input id="signupEmail" type="email" placeholder="name@example.com" required />
+        <input id="signupEmail" type="email" placeholder="name@example.com" autocomplete="email" required />
 
         <label for="signupPassword">Password</label>
-        <div class="password-field"><input id="signupPassword" type="password" placeholder="Create a password" required /><button type="button" class="password-toggle" data-password-target="signupPassword" aria-label="Show password">Show</button></div>
+        <div class="password-field"><input id="signupPassword" type="password" placeholder="Create a password (at least 8 characters)" minlength="8" autocomplete="new-password" required /><button type="button" class="password-toggle" data-password-target="signupPassword" aria-label="Show password">Show</button></div>
 
         <label for="signupConfirmPassword">Confirm password</label>
-        <div class="password-field"><input id="signupConfirmPassword" type="password" placeholder="Confirm password" required /><button type="button" class="password-toggle" data-password-target="signupConfirmPassword" aria-label="Show password">Show</button></div>
+        <div class="password-field"><input id="signupConfirmPassword" type="password" placeholder="Confirm password" minlength="8" autocomplete="new-password" required /><button type="button" class="password-toggle" data-password-target="signupConfirmPassword" aria-label="Show password">Show</button></div>
 
         <button class="button button-primary full-width" type="submit">
           Create account
@@ -1123,12 +1155,16 @@
 
       <form id="forgotPasswordForm" class="auth-form">
         <label for="forgotEmail">Account email</label>
-        <input id="forgotEmail" type="email" placeholder="name@example.com" required />
-        <button class="button button-primary full-width" type="submit">Simulate reset email</button>
+        <input id="forgotEmail" type="email" placeholder="name@example.com" autocomplete="email" required />
+        <label for="resetPassword">New password</label>
+        <input id="resetPassword" type="password" placeholder="At least 8 characters" minlength="8" autocomplete="new-password" required />
+        <label for="resetConfirmPassword">Confirm new password</label>
+        <input id="resetConfirmPassword" type="password" placeholder="Confirm new password" minlength="8" autocomplete="new-password" required />
+        <button class="button button-primary full-width" type="submit">Update password</button>
         <button type="button" class="text-button" id="backToLoginButton">Back to login</button>
       </form>
 
-      <p class="demo-note">Your staff account and patient records stay in this browser storage for later use.</p>
+      <p class="demo-note">Accounts and workspace data are saved in this browser on this device only. This is not a server-backed secure login.</p>
     </div>
   </div>
 
@@ -1151,19 +1187,19 @@
   <aside id="floatingAiPanel" class="floating-ai-panel" aria-hidden="true" aria-labelledby="floatingAiTitle">
     <header class="floating-ai-header">
       <div class="floating-ai-identity"><span class="floating-ai-icon" aria-hidden="true">✦</span><div><strong id="floatingAiTitle">Yash AI</strong><span id="floatingAiSubtitle">Your Smart Community Health Camp Assistant</span></div></div>
-      <div class="floating-ai-header-actions"><span id="floatingAiBadge" class="floating-ai-badge">Demo Mode</span><button id="floatingAiMinimize" class="floating-ai-icon-button" type="button" aria-label="Minimize Yash AI">−</button><button id="floatingAiClose" class="floating-ai-icon-button" type="button" aria-label="Close Yash AI">×</button></div>
+      <div class="floating-ai-header-actions"><span id="floatingAiBadge" class="floating-ai-badge">Local mode</span><button id="floatingAiMinimize" class="floating-ai-icon-button" type="button" aria-label="Minimize Yash AI">−</button><button id="floatingAiClose" class="floating-ai-icon-button" type="button" aria-label="Close Yash AI">×</button></div>
     </header>
     <div class="floating-ai-toolbar"><label for="floatingAiLanguage">Language</label><select id="floatingAiLanguage" aria-label="Yash AI language"><option value="en">English</option><option value="kn">ಕನ್ನಡ</option><option value="hi">हिन्दी</option></select></div>
-    <div id="floatingAiMessages" class="floating-ai-messages" aria-live="polite"><div class="floating-ai-message assistant"><strong>Yash AI</strong><p>Hello! I can help with fictional camp operations, reports, posters, translations, and presentation support. I cannot diagnose or prescribe.</p></div></div>
+    <div id="floatingAiMessages" class="floating-ai-messages" aria-live="polite"><div class="floating-ai-message assistant"><strong>Yash AI</strong><p>Hello! I can help with camp operations, reports, posters, translations, and presentation support. I cannot diagnose or prescribe.</p></div></div>
     <div class="floating-ai-prompts"><button type="button" data-floating-ai-prompt="Summarize today’s camp operations.">Summarize camp</button><button type="button" data-floating-ai-prompt="Which department has the longest queue?">Explain queue</button><button type="button" data-floating-ai-prompt="Translate this camp announcement into Kannada.">Translate</button></div>
     <form id="floatingAiForm" class="floating-ai-form"><textarea id="floatingAiInput" rows="2" placeholder="Ask about camp operations, reports, posters, or translations…" aria-label="Ask Yash AI"></textarea><button id="floatingAiSend" class="button button-primary" type="submit">Send</button></form>
-    <footer class="floating-ai-footer"><span>Fictional demo data only</span><button id="floatingAiClear" class="text-button" type="button">Clear chat</button></footer>
+    <footer class="floating-ai-footer"><span>Administrative support only</span><button id="floatingAiClear" class="text-button" type="button">Clear chat</button></footer>
   </aside>
 
   <div id="commandPalette" class="modal-backdrop" aria-hidden="true">
     <div class="command-palette" role="dialog" aria-modal="true" aria-labelledby="commandPaletteTitle">
       <div class="panel-header"><div><p class="eyebrow-text">Quick action</p><h2 id="commandPaletteTitle">Command palette</h2></div><button id="closeCommandPaletteButton" class="modal-close" type="button" aria-label="Close command palette">×</button></div>
-      <button id="commandAskAiButton" class="command-action" type="button"><strong>Ask Yash AI</strong><span>Open the fictional operations assistant</span><kbd>Ctrl K</kbd></button>
+      <button id="commandAskAiButton" class="command-action" type="button"><strong>Ask Yash AI</strong><span>Open the operations assistant</span><kbd>Ctrl K</kbd></button>
       <p class="command-hint">Press Ctrl + K or Cmd + K from anywhere in the app.</p>
     </div>
   </div>
@@ -1172,13 +1208,12 @@
     <div class="login-modal ai-preview-modal" role="dialog" aria-modal="true" aria-labelledby="aiPreviewTitle">
       <button id="closeAiPreviewButton" class="modal-close" type="button" aria-label="Close data preview">×</button>
       <p class="eyebrow-text">Data preview before AI</p>
-      <h2 id="aiPreviewTitle">Review the safe demo data</h2>
-      <p class="modal-description">Yash AI uses only aggregate fictional information. The destination changes only when a server-side provider key is configured.</p>
+      <h2 id="aiPreviewTitle">Review data before sharing</h2>
+      <p class="modal-description">Yash AI uses aggregate operational information only. The destination changes only when a server-side provider key is configured.</p>
       <div class="ai-preview-list"><div><strong>Included</strong><span id="aiPreviewIncluded">Aggregate operational totals</span></div><div><strong>Removed</strong><span>Patient identifiers, medical histories, diagnoses, prescriptions, and contact details</span></div><div><strong>Destination</strong><span id="aiPreviewDestination">Checking the local AI service…</span></div></div>
       <div class="ai-preview-actions"><button id="cancelAiPreviewButton" class="button button-ghost" type="button">Cancel</button><button id="confirmAiPreviewButton" class="button button-primary" type="button">Confirm and generate</button></div>
     </div>
   </div>
 
   <div id="customCursor" class="custom-cursor" aria-hidden="true"></div>
-  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 </body>

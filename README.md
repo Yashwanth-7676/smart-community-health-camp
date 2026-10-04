@@ -22,6 +22,14 @@ Open `http://127.0.0.1:8000/index.html`. The project includes a manifest and ser
 
 The demo preserves the landing page, poster, camp registration, login, role-aware dashboard, workflow progress, patient registration, queue, QR pass, inventory, reports, settings, themes, translation controls, PWA shell, offline simulation, and Yash AI demo.
 
+### Modern Architecture & Visual Upgrades (2026)
+- **Design Tokens (src/tokens/design-tokens.css):** Centralized CSS custom properties for palette, typography, radii, and shadows.
+- **Dynamic Component Engine (src/js/init-components.js & src/components/):** 13 reusable HTML templates for cards, buttons, badges, modals, testimonials, pricing, and FAQ.
+- **Interactive Theme Customizer (src/js/theme-customizer.js):** Live floating color pickers, border-radius sliders, and font selectors with persistent localStorage.
+- **Micro-Interactions & Animations (src/js/animations.js):** Smooth IntersectionObserver scroll reveals, counting stats, and navbar highlight.
+- **Full Offline PWA Support (sw.js):** Extended smartcare-shell-v25 pre-caching all new templates and ES modules.
+- **Interactive 3D Zero-Gravity Hero (zero-gravity-hero.html & DefyGravityHero.tsx):** Awwwards-caliber WebGL physical simulation with 25 zero-G floating bodies, mouse repulsion, kinetic impulse detonate, Bloom/DoF postprocessing, and custom GLSL nebula background. Accessible via the **3D Zero-G Experience ✦** button on the landing page.
+
 ## Yash AI
 
 Yash AI safely falls back to local Demo mode by default. To use real Gemini responses, create a local `.env` file from `.env.example`, add your own restricted `GEMINI_API_KEY`, and restart `python app_server.py`. The key is read only by the loopback server; it is not embedded in browser code or sent to the client. When no key is configured or the provider is unavailable, the app continues with deterministic local responses.

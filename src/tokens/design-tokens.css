@@ -1,0 +1,191 @@
+/* ---------------------------------------------------------------
+   Design Tokens – Centralized CSS Variables
+   --------------------------------------------------------------- */
+
+/* Base spacing (8‑px grid) */
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+}
+
+/* Border‑radius scale */
+:root {
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+}
+
+/* Shadow tokens */
+:root {
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.15);
+  --shadow-lg: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+/* Motion/easing */
+:root {
+  --motion-fast: 180ms;
+  --motion-medium: 260ms;
+  --motion-slow: 420ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ---------------------------------------------------------------
+   Light Theme Tokens
+   --------------------------------------------------------------- */
+:root {
+  /* Primary palette */
+  --color-primary: #2A9D8F;   /* Teal */
+  --color-primary-dark: #21867A;
+  --color-secondary: #E9C46A; /* Warm amber */
+  --color-accent: #F4A261;    /* Soft orange */
+  --color-neutral: #264653;  /* Dark slate */
+
+  /* Semantic colors */
+  --background: #F5F9FC;      /* Light page bg */
+  --surface: #FFFFFF;         /* Cards, panels */
+  --surface-soft: #F0F4F8;    /* Slightly tinted surfaces */
+  --surface-hover: #E8EFF5;   /* Hover state */
+  --text: #102A43;            /* Primary text */
+  --text-muted: #627D98;     /* Secondary text */
+  --border: #D9E2EC;          /* Light border */
+
+  /* Typography */
+  --font-base: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-heading: "Space Grotesk", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-size-base: 1rem;      /* 16 px */
+  --font-size-lg: 1.125rem;    /* 18 px */
+  --font-size-xl: 1.25rem;    /* 20 px */
+  --line-height-base: 1.5;
+}
+
+/* ---------------------------------------------------------------
+   Dark Theme Tokens
+   --------------------------------------------------------------- */
+[data-theme="dark"] {
+  --color-primary: #2A9D8F;   /* Same primary for consistency */
+  --color-primary-dark: #21867A;
+  --color-secondary: #E9C46A;
+  --color-accent: #F4A261;
+  --color-neutral: #264653;
+
+  --background: #030014;        /* Deep navy */
+  --surface: rgba(255,255,255,0.03); /* Subtle glass */
+  --surface-soft: rgba(255,255,255,0.05);
+  --surface-hover: rgba(255,255,255,0.08);
+  --text: #F8FAFC;
+  --text-muted: #94A3B8;
+  --border: rgba(255,255,255,0.1);
+}
+
+/* ---------------------------------------------------------------
+   Global typographic defaults (apply token values)
+   --------------------------------------------------------------- */
+html {
+  font-family: var(--font-base);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  color: var(--text);
+  background: var(--background);
+  transition: background var(--motion-medium) var(--ease-out),
+              color var(--motion-medium) var(--ease-out);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  margin-top: 0;
+  margin-bottom: var(--space-3);
+  line-height: 1.2;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+}
+
+/* Utility classes for quick spacing & radius */
+.p-1 { padding: var(--space-1); }
+.p-2 { padding: var(--space-2); }
+.p-3 { padding: var(--space-3); }
+.round-sm { border-radius: var(--radius-sm); }
+.round-md { border-radius: var(--radius-md); }
+.round-lg { border-radius: var(--radius-lg); }
+
+/* Button base – variant controlled by data-variant */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  transition: background var(--motion-fast) var(--ease-out),
+              transform var(--motion-fast) var(--ease-out),
+              box-shadow var(--motion-fast) var(--ease-out);
+}
+
+.button[data-variant="primary"] {
+  background: var(--color-primary);
+  color: #fff;
+}
+.button[data-variant="secondary"] {
+  background: var(--color-secondary);
+  color: #000;
+}
+.button[data-variant="ghost"] {
+  background: transparent;
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+}
+.button[data-variant="outline"] {
+  background: transparent;
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+}
+
+.button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ---------------------------------------------------------------
+   Scroll Reveal – base & visible states
+   --------------------------------------------------------------- */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity var(--motion-slow) var(--ease-out),
+    transform var(--motion-slow) var(--ease-out);
+}
+
+.reveal-on-scroll.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .reveal-on-scroll {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Stagger children inside a grid/list */
+.reveal-on-scroll:nth-child(1) { transition-delay: 0ms; }
+.reveal-on-scroll:nth-child(2) { transition-delay: 60ms; }
+.reveal-on-scroll:nth-child(3) { transition-delay: 120ms; }
+.reveal-on-scroll:nth-child(4) { transition-delay: 180ms; }
+.reveal-on-scroll:nth-child(5) { transition-delay: 240ms; }
+.reveal-on-scroll:nth-child(6) { transition-delay: 300ms; }

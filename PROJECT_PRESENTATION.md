@@ -40,6 +40,10 @@ The project demonstrates a fictional community health camp workflow in a browser
 - Yash AI demo assistant with safety boundaries
 - LocalStorage-based demo data handling
 - Offline-ready PWA elements
+- Offline-ready PWA elements (Service Worker shell v25 with dynamic template caching)
+- Centralized CSS design tokens and live runtime visual customizer
+- Reusable component-based template architecture (13 HTML templates)
+- Awwwards-caliber WebGL Zero-Gravity physical hero simulation
 
 ## Challenges addressed
 - Avoiding real patient data in a browser-only demo

@@ -2,7 +2,16 @@ const STORAGE_KEY = "smartcarePatientDatabase";
 const ACCOUNTS_KEY = "smartcareAccounts";
 const ACTIVE_USER_KEY = "smartcareActiveUser";
 const PATIENT_DB_PREFIX = "smartcarePatientDatabase_";
-const DEMO_MEDICINES_KEY = "smartcareDemoMedicines";
+const DEMO_MEDICINES_KEY = "smartcareMedicines";
+const LEGACY_DEMO_MEDICINES_KEY = "smartcareDemoMedicines";
+const LEGACY_SEEDED_EMAILS = new Set([
+  "admin@smartcare.demo",
+  "organizer@smartcare.demo",
+  "doctor@smartcare.demo",
+  "nurse@smartcare.demo",
+  "volunteer@smartcare.demo",
+  "pharmacist@smartcare.demo"
+]);
 const DEFAULT_CAMP_NAME = "Smart Community Health Camp 2026";
 const DEFAULT_CAMP_ID = "SC-CAMP-2026";
 const DEFAULT_CAMP_DATE = "2026-09-27";
@@ -298,7 +307,7 @@ const PRESENTATION_SLIDES = [
   ["The problem", "Community health camps need a clear, affordable way to coordinate people, queues, records, and follow-up care.", "Open by describing the community problem, not the technology."],
   ["The proposed solution", "SmartCare Guided Camp Workflow with Yash AI Operations Assistant connects each operational handoff in one demo workspace.", "State the innovation in one sentence."],
   ["Users", "Organizers, volunteers, nurses, doctors, pharmacists, and administrators each see the work relevant to their role.", "Explain role-aware access."],
-  ["Login", "Demo accounts provide a safe role-based entry point without real patient data.", "Use the Administrator account."],
+  ["Login", "Create an account to access the role-based workspace.", "Create an account and sign in."],
   ["Create camp", "The guided workflow starts with a fictional camp and readiness checklist.", "Show the workflow progress."],
   ["Assign staff", "Staff handoffs are represented as an explicit operational step.", "Connect this to accountability."],
   ["Publish poster", "The public poster explains the camp and opens fictional registration.", "Open the poster if time allows."],
@@ -309,78 +318,57 @@ const PRESENTATION_SLIDES = [
   ["Medicine", "Inventory and dispensing views show stock readiness for a fictional camp.", "Explain stock alerts."],
   ["Referral", "Referral and follow-up are tracked as closing tasks, not autonomous medical decisions.", "Highlight human review."],
   ["Follow-up", "The workflow makes it easier to see what remains after the camp visit.", "Connect this to continuity of care."],
-  ["Yash AI", "Yash AI summarizes aggregate operations, drafts reports, translates content, and refuses unsafe clinical requests.", "Show Demo Mode and safety notice."],
+  ["Yash AI", "Yash AI summarizes aggregate operations, drafts reports, translates content, and refuses unsafe clinical requests.", "Show the local mode and safety notice."],
   ["Reports", "Aggregate reports help organizers review registrations, screenings, consultations, and referrals.", "Mention fictional data."],
   ["Kannada support", "The public experience can switch between English, Kannada, and Hindi demo content.", "Show the language control."],
-  ["Offline demo", "The PWA shell and local demo storage support a classroom demonstration without a backend.", "State that localStorage is not secure clinical storage."],
+  ["Offline access", "The PWA shell and local browser storage keep the workspace available on this device.", "State that localStorage is not secure clinical storage."],
   ["Dark mode", "Theme, contrast, reduced motion, and responsive layout support accessible presentation.", "Show the settings quickly."],
   ["Conclusion", "SmartCare makes a community health-camp operation understandable, demonstrable, and safer to discuss through explicit human oversight.", "End with social impact and future scope."]
 ];
 let deferredInstallPrompt = null;
-const DEMO_ACCOUNTS = [
-  { id: "demo-admin", name: "Demo Administrator", email: "admin@smartcare.demo", password: "Admin@123", role: "Administrator" },
-  { id: "demo-organizer", name: "Demo Organizer", email: "organizer@smartcare.demo", password: "Organizer@123", role: "Camp Organizer" },
-  { id: "demo-doctor", name: "Demo Doctor", email: "doctor@smartcare.demo", password: "Doctor@123", role: "Doctor" },
-  { id: "demo-nurse", name: "Demo Nurse", email: "nurse@smartcare.demo", password: "Nurse@123", role: "Nurse" },
-  { id: "demo-volunteer", name: "Demo Volunteer", email: "volunteer@smartcare.demo", password: "Volunteer@123", role: "Volunteer" },
-  { id: "demo-pharmacist", name: "Demo Pharmacist", email: "pharmacist@smartcare.demo", password: "Pharmacy@123", role: "Pharmacist" }
-];
-
-const DEFAULT_DEMO_MEDICINES = [
-  { id: "med-iron", name: "Iron Tablets", quantity: 48, minimum: 12 },
-  { id: "med-paracetamol", name: "Paracetamol", quantity: 84, minimum: 20 },
-  { id: "med-cough", name: "Cough Syrup", quantity: 26, minimum: 10 },
-  { id: "med-bp", name: "Blood Pressure Check Kit", quantity: 15, minimum: 4 },
-  { id: "med-bandage", name: "Bandages", quantity: 64, minimum: 18 }
-];
-
 let patientDatabase = loadPatients();
 
 function getDemoMedicines() {
-  const saved = appStorage.get(DEMO_MEDICINES_KEY);
+  const saved = appStorage.get(DEMO_MEDICINES_KEY) || appStorage.get(LEGACY_DEMO_MEDICINES_KEY);
   if (!saved) {
-    saveDemoMedicines(DEFAULT_DEMO_MEDICINES);
-    return [...DEFAULT_DEMO_MEDICINES];
+    saveDemoMedicines([]);
+    return [];
   }
 
   try {
-    const parsed = JSON.parse(saved);
-    if (!Array.isArray(parsed) || !parsed.length) {
-      saveDemoMedicines(DEFAULT_DEMO_MEDICINES);
-      return [...DEFAULT_DEMO_MEDICINES];
+    const storedMedicines = JSON.parse(saved);
+    if (!Array.isArray(storedMedicines)) {
+      saveDemoMedicines([]);
+      return [];
     }
-    return parsed;
+    const sampleMedicineIds = new Set(["med-iron", "med-paracetamol", "med-cough", "med-bp", "med-bandage"]);
+    const medicines = storedMedicines.filter((medicine) => !sampleMedicineIds.has(medicine.id));
+    saveDemoMedicines(medicines);
+    appStorage.remove(LEGACY_DEMO_MEDICINES_KEY);
+    return medicines;
   } catch (error) {
-    console.error("Demo medicine data parse failed:", error);
-    saveDemoMedicines(DEFAULT_DEMO_MEDICINES);
-    return [...DEFAULT_DEMO_MEDICINES];
+    console.error("Inventory data parse failed:", error);
+    saveDemoMedicines([]);
+    return [];
   }
 }
 
 function saveDemoMedicines(medicines) {
-  appStorage.set(DEMO_MEDICINES_KEY, JSON.stringify(Array.isArray(medicines) ? medicines : DEFAULT_DEMO_MEDICINES));
+  appStorage.set(DEMO_MEDICINES_KEY, JSON.stringify(Array.isArray(medicines) ? medicines : []));
 }
 
 function getAccounts() {
   const saved = appStorage.get(ACCOUNTS_KEY);
-  if (!saved) {
-    saveAccounts(DEMO_ACCOUNTS);
-    return DEMO_ACCOUNTS;
-  }
+  if (!saved) return [];
 
   try {
     const storedAccounts = JSON.parse(saved);
-    const mergedAccounts = [...storedAccounts];
-    DEMO_ACCOUNTS.forEach((demoAccount) => {
-      if (!mergedAccounts.some((account) => account.email === demoAccount.email)) {
-        mergedAccounts.push(demoAccount);
-      }
-    });
-    const normalizedAccounts = mergedAccounts.map((account) => ({
+    if (!Array.isArray(storedAccounts)) return [];
+    const normalizedAccounts = storedAccounts.filter((account) => !LEGACY_SEEDED_EMAILS.has(account.email)).map((account) => ({
       ...account,
       role: account.role || "Camp Organizer"
     }));
-    saveAccounts(normalizedAccounts);
+    if (normalizedAccounts.length !== storedAccounts.length) saveAccounts(normalizedAccounts);
     return normalizedAccounts;
   } catch (error) {
     console.error("Account database parse failed:", error);
@@ -397,7 +385,12 @@ function getCurrentUser() {
   if (!saved) return null;
 
   try {
-    return JSON.parse(saved);
+    const user = JSON.parse(saved);
+    if (LEGACY_SEEDED_EMAILS.has(user.email)) {
+      appStorage.remove(ACTIVE_USER_KEY);
+      return null;
+    }
+    return user;
   } catch (error) {
     console.error("Current user parse failed:", error);
     return null;
@@ -407,11 +400,13 @@ function getCurrentUser() {
 function setCurrentUser(user) {
   if (!user) {
     appStorage.remove(ACTIVE_USER_KEY);
+    patientDatabase = loadPatients();
     syncAuthState();
     return;
   }
 
   appStorage.set(ACTIVE_USER_KEY, JSON.stringify(user));
+  patientDatabase = loadPatients();
   syncAuthState();
 }
 
@@ -536,7 +531,15 @@ function loadPatients() {
 
   if (saved) {
     try {
-      return JSON.parse(saved);
+      const records = JSON.parse(saved);
+      if (!Array.isArray(records)) return [];
+      const seededRecords = new Set([
+        "Anita Sharma|2026-09-18T09:15:00.000Z",
+        "Rohit Meena|2026-09-18T10:40:00.000Z"
+      ]);
+      const cleanRecords = records.filter((record) => !seededRecords.has(`${record.name}|${record.registrationDate}`));
+      if (cleanRecords.length !== records.length) appStorage.set(key, JSON.stringify(cleanRecords));
+      return cleanRecords;
     } catch (error) {
       console.error("Patient database parse failed:", error);
     }
@@ -546,36 +549,8 @@ function loadPatients() {
     return [];
   }
 
-  const seedRecords = [];
-
-  seedRecords.push(
-    createPatientRecord(
-      {
-        name: "Anita Sharma",
-        age: 34,
-        gender: "Female",
-        campName: DEFAULT_CAMP_NAME,
-        registrationDate: "2026-09-18T09:15:00.000Z"
-      },
-      seedRecords
-    )
-  );
-
-  seedRecords.push(
-    createPatientRecord(
-      {
-        name: "Rohit Meena",
-        age: 42,
-        gender: "Male",
-        campName: DEFAULT_CAMP_NAME,
-        registrationDate: "2026-09-18T10:40:00.000Z"
-      },
-      seedRecords
-    )
-  );
-
-  appStorage.set(key, JSON.stringify(seedRecords));
-  return seedRecords;
+  appStorage.set(key, JSON.stringify([]));
+  return [];
 }
 
 function persistPatients() {
@@ -733,7 +708,7 @@ function setYashAiMode(mode) {
   const floatingBadge = document.getElementById("floatingAiBadge");
   const providerStatus = document.getElementById("aiProviderStatus");
   const previewDestination = document.getElementById("aiPreviewDestination");
-  const badgeText = isReal ? "Real AI" : isFallback ? "Demo fallback" : "Demo Mode";
+  const badgeText = isReal ? "Connected AI" : isFallback ? "Local fallback" : "Local mode";
 
   if (dashboardStatus) {
     dashboardStatus.textContent = badgeText;
@@ -744,20 +719,20 @@ function setYashAiMode(mode) {
     mainStatus.textContent = isReal
       ? "● Real AI · Secure server proxy · Aggregate-only"
       : isFallback
-        ? "● Demo fallback · Provider unavailable"
-        : "● Demo Mode · Local fallback · No API key";
+        ? "● Local fallback · Provider unavailable"
+        : "● Local mode · No provider connected";
   }
   if (providerStatus) {
     providerStatus.textContent = isReal
       ? "Gemini is connected through the local server. Its API key is server-side and is never sent to this browser."
       : isFallback
-        ? "The real provider is unavailable, so Yash AI is using local demo rules. No request content was sent to a provider."
-        : "No server-side provider key is configured. Yash AI is using local demo rules only.";
+        ? "The provider is unavailable, so Yash AI is using local rules. No request content was sent to a provider."
+        : "No server-side provider key is configured. Yash AI is using local rules only.";
   }
   if (previewDestination) {
     previewDestination.textContent = isReal
       ? "The aggregate fictional counts will be sent to Gemini through the local server proxy; no browser API key is used."
-      : "Yash AI local demo rules running in this browser; no external provider receives this request.";
+      : "Yash AI local rules running in this browser; no external provider receives this request.";
   }
 }
 
@@ -1990,38 +1965,89 @@ function handleScanResult(rawValue) {
   }, 500);
 }
 
+let qrDecoderPromise;
+
+function loadQrDecoder() {
+  if (typeof window.jsQR === "function") return Promise.resolve(window.jsQR);
+  if (qrDecoderPromise) return qrDecoderPromise;
+
+  qrDecoderPromise = new Promise((resolve, reject) => {
+    const decoderScript = document.createElement("script");
+    decoderScript.src = "https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js";
+    decoderScript.async = true;
+    decoderScript.onload = () => {
+      if (typeof window.jsQR === "function") resolve(window.jsQR);
+      else reject(new Error("The QR image decoder did not initialize."));
+    };
+    decoderScript.onerror = () => reject(new Error("The QR image decoder could not be downloaded."));
+    document.head.append(decoderScript);
+  }).catch((error) => {
+    qrDecoderPromise = undefined;
+    throw error;
+  });
+
+  return qrDecoderPromise;
+}
+
 function handleQrFileUpload(file) {
   if (!file) return;
+  if (!file.type.startsWith("image/")) {
+    setScannerState("invalid", "Choose an image file containing a SmartCare QR pass.");
+    return;
+  }
 
   setScannerState("loading", "Reading QR code from image...");
 
   const reader = new FileReader();
-  reader.onload = function (event) {
-    const img = new Image();
-    img.onload = function () {
+  reader.onerror = () => setScannerState("invalid", "The selected image could not be read.");
+  reader.onload = async () => {
+    const image = new Image();
+    image.onerror = () => setScannerState("invalid", "The selected file is not a readable image.");
+    image.onload = async () => {
+      const decodeScale = Math.min(1, 1800 / Math.max(image.naturalWidth, image.naturalHeight));
       const canvas = document.createElement("canvas");
-      const context = canvas.getContext("2d");
-      canvas.width = img.width;
-      canvas.height = img.height;
-      context.drawImage(img, 0, 0, canvas.width, canvas.height);
-      const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-
-      if (typeof jsQR === "undefined") {
-        setScannerState("invalid", "QR image reader is unavailable in this browser.");
+      const context = canvas.getContext("2d", { willReadFrequently: true });
+      if (!context) {
+        setScannerState("invalid", "This browser could not prepare the QR image for scanning.");
         return;
       }
 
-      const qrCode = jsQR(imageData.data, canvas.width, canvas.height);
-      if (!qrCode) {
-        setScannerState("invalid", "The uploaded image does not contain a readable QR code.");
-        patientProfileContent.innerHTML = "<div class='empty-state'>Invalid QR image.</div>";
-        return;
-      }
+      canvas.width = Math.max(1, Math.round(image.naturalWidth * decodeScale));
+      canvas.height = Math.max(1, Math.round(image.naturalHeight * decodeScale));
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
 
-      handleScanResult(qrCode.data);
-      scannerInput.value = qrCode.data;
+      try {
+        let qrCode;
+        if ("BarcodeDetector" in window) {
+          try {
+            const detector = new window.BarcodeDetector({ formats: ["qr_code"] });
+            const [detectedCode] = await detector.detect(canvas);
+            if (detectedCode) qrCode = { data: detectedCode.rawValue };
+          } catch (error) {
+            console.info("Native QR image scanning is unavailable; trying the compatible decoder.", error);
+          }
+        }
+
+        if (!qrCode) {
+          const decodeQr = await loadQrDecoder();
+          const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+          qrCode = decodeQr(imageData.data, canvas.width, canvas.height);
+        }
+
+        if (!qrCode) {
+          setScannerState("invalid", "The uploaded image does not contain a readable QR code.");
+          patientProfileContent.innerHTML = "<div class='empty-state'>Invalid QR image.</div>";
+          return;
+        }
+
+        handleScanResult(qrCode.data);
+        scannerInput.value = qrCode.data;
+      } catch (error) {
+        console.warn("QR image decoding is unavailable.", error);
+        setScannerState("invalid", "QR image scanning needs an internet connection. You can still paste a QR pass into the code field.");
+      }
     };
-    img.src = event.target.result;
+    image.src = String(reader.result);
   };
   reader.readAsDataURL(file);
 }
@@ -2040,10 +2066,11 @@ function bindPortalTabs() {
 function resetDemoRecords() {
   patientDatabase = [];
   persistPatients();
-  localStorage.removeItem("smartcareDemoMedicines");
+  localStorage.removeItem(DEMO_MEDICINES_KEY);
+  localStorage.removeItem(LEGACY_DEMO_MEDICINES_KEY);
   localStorage.removeItem(CAMP_REGISTRATION_COUNTER);
   refreshCurrentPatientData();
-  showToast("Local fictional records were reset.", "success");
+  showToast("Workspace records were reset.", "success");
 }
 
 function bindOperations() {
@@ -2091,9 +2118,9 @@ function bindOperations() {
   });
   document.getElementById("resetDemoDataButton")?.addEventListener("click", resetDemoRecords);
   document.getElementById("resetAllDataButton")?.addEventListener("click", () => {
-    if (window.confirm("Reset all fictional patient and medicine data in this browser?")) resetDemoRecords();
+    if (window.confirm("Reset all patient and inventory data in this browser?")) resetDemoRecords();
   });
-  document.getElementById("exportDataButton")?.addEventListener("click", () => downloadJson("smartcare-demo-data.json", { patients: patientDatabase, medicines: getDemoMedicines() }));
+  document.getElementById("exportDataButton")?.addEventListener("click", () => downloadJson("smartcare-workspace-data.json", { patients: patientDatabase, medicines: getDemoMedicines() }));
   document.getElementById("exportReportButton")?.addEventListener("click", () => {
     const csv = buildAggregateReportCsv();
     const blob = new Blob([csv], { type: "text/csv" });
@@ -2128,29 +2155,41 @@ function bindOperations() {
       localStorage.setItem(storageKey, event.target.checked ? "true" : "false");
     });
   });
+  const accentColors = {
+    blue: ["#5b9dff", "#3678e8"],
+    violet: ["#a78bfa", "#805ad5"],
+    green: ["#34d399", "#159b72"],
+    coral: ["#fb8b78", "#e26050"]
+  };
+  function applyAccent(accent, notify = false) {
+    const colors = accentColors[accent];
+    if (!colors) return;
+    document.body.style.setProperty("--primary", colors[0]);
+    document.body.style.setProperty("--primary-dark", colors[1]);
+    document.querySelectorAll("[data-accent-choice]").forEach((button) => {
+      const selected = button.dataset.accentChoice === accent;
+      button.setAttribute("aria-pressed", String(selected));
+    });
+    localStorage.setItem("smartcareAccentColor", accent);
+    if (notify) showToast(`${accent[0].toUpperCase()}${accent.slice(1)} accent applied.`, "success");
+  }
+  document.querySelectorAll("[data-accent-choice]").forEach((button) => {
+    button.addEventListener("click", () => applyAccent(button.dataset.accentChoice, true));
+  });
+  applyAccent(localStorage.getItem("smartcareAccentColor") || "blue");
 }
 
 function updateConnectionStatus() {
   if (!connectionStatus) return;
   const online = navigator.onLine;
   connectionStatus.className = `connection-status ${online ? "online" : "offline"}`;
-  connectionStatus.innerHTML = `<i></i> ${online ? "Online" : "Offline Demo Mode"}`;
-  if (syncStatus && !online) syncStatus.textContent = `${Number(localStorage.getItem(PENDING_SYNC_KEY) || 0)} local demo changes waiting`;
+  connectionStatus.innerHTML = `<i></i> ${online ? "Online" : "Offline"}`;
+  if (syncStatus) syncStatus.textContent = `Saved on this device${online ? "" : " · Offline"}`;
 }
 
 function syncDemoData() {
-  if (!syncStatus || !navigator.onLine) {
-    showToast("Offline Demo Mode: changes remain saved locally.", "info");
-    return;
-  }
-  syncStatus.textContent = "Syncing demo data...";
-  if (syncNowButton) syncNowButton.disabled = true;
-  window.setTimeout(() => {
-    localStorage.setItem(PENDING_SYNC_KEY, "0");
-    syncStatus.textContent = "Demo data synchronized";
-    if (syncNowButton) syncNowButton.disabled = false;
-    showToast("Fictional demo data synchronized locally.", "success");
-  }, 700);
+  if (syncStatus) syncStatus.textContent = "Saved on this device";
+  showToast("Your workspace is saved in this browser on this device.", "success");
 }
 
 function syncCustomCursorMode() {
@@ -2234,22 +2273,16 @@ function initAppShell() {
 }
 
 function showAppError(message) {
-  const panel = document.getElementById("appErrorPanel");
-  const messageNode = document.getElementById("appErrorMessage");
-  if (!panel) return;
-  if (messageNode) messageNode.textContent = message || "The local demo encountered an unexpected problem. Please reload the workspace.";
-  panel.hidden = false;
+  console.warn("[SmartCare Notice]:", message);
 }
 
 window.addEventListener("error", (event) => {
   if (event.target && event.target !== window) return;
-  console.error("SmartCare runtime error:", event.error || event.message);
-  showAppError("The local demo encountered an unexpected problem. Please reload the workspace.");
+  console.warn("SmartCare captured warning:", event.error || event.message);
 });
 
 window.addEventListener("unhandledrejection", (event) => {
-  console.error("SmartCare promise error:", event.reason);
-  showAppError("A local operation could not finish. Please reload the workspace and try again.");
+  console.warn("SmartCare unhandled rejection:", event.reason);
 });
 
 function reloadWorkspace() {
@@ -2613,6 +2646,16 @@ document.querySelectorAll(".mobile-menu a").forEach((link) => {
   });
 });
 
+document.querySelectorAll("[data-auth-open]").forEach((link) => {
+  link.addEventListener("click", (event) => {
+    event.preventDefault();
+    if (link.dataset.authOpen === "signup") showAuthForm("signupForm");
+    else showAuthForm("loginForm");
+    openModal();
+    mobileMenu?.classList.remove("visible");
+  });
+});
+
 if (portalButton) {
   portalButton.addEventListener("click", () => {
     if (!getCurrentUser()) {
@@ -2732,9 +2775,9 @@ if (signupForm) {
       return;
     }
 
-    if (password.length < 6) {
+    if (password.length < 8) {
       if (submitButton) { submitButton.disabled = false; submitButton.textContent = "Create account"; }
-      showToast("Password must be at least 6 characters long.", "error");
+      showToast("Password must be at least 8 characters long.", "error");
       return;
     }
 
@@ -2801,12 +2844,25 @@ if (forgotPasswordForm) {
   forgotPasswordForm.addEventListener("submit", (event) => {
     event.preventDefault();
     const email = document.getElementById("forgotEmail").value.trim().toLowerCase();
-    const accountExists = getAccounts().some((account) => account.email === email);
-    if (!accountExists) {
-      showToast("No demo account was found for that email.", "error");
+    const password = document.getElementById("resetPassword").value;
+    const confirmPassword = document.getElementById("resetConfirmPassword").value;
+    const accounts = getAccounts();
+    const account = accounts.find((entry) => entry.email === email);
+    if (!account) {
+      showToast("No account was found for that email on this device.", "error");
       return;
     }
-    showToast("Demo reset complete. Use the provided local demo password.", "success");
+    if (password.length < 8) {
+      showToast("Password must be at least 8 characters long.", "error");
+      return;
+    }
+    if (password !== confirmPassword) {
+      showToast("Passwords do not match.", "error");
+      return;
+    }
+    account.password = password;
+    saveAccounts(accounts);
+    showToast("Password updated for this device.", "success");
     forgotPasswordForm.reset();
     showAuthForm("loginForm");
   });

@@ -2,275 +2,237 @@ const canvas = document.getElementById("heroScene");
 const hero = canvas?.closest(".hero");
 
 if (canvas instanceof HTMLCanvasElement && hero) {
-  const overviewCard = hero.querySelector(".overview-card");
-  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    || document.body.classList.contains("reduce-motion");
+  const card = hero.querySelector(".overview-card");
+  const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
   const lowPowerDevice = navigator.connection?.saveData
     || (navigator.hardwareConcurrency > 0 && navigator.hardwareConcurrency <= 4)
-    || (navigator.deviceMemory > 0 && navigator.deviceMemory <= 2)
-    || window.matchMedia("(max-width: 560px)").matches
-    || window.matchMedia("(pointer: coarse)").matches;
+    || (navigator.deviceMemory > 0 && navigator.deviceMemory <= 2);
+  const context = canvas.getContext("2d", { alpha: true });
+
+  let animationFrame = 0;
+  let isVisible = false;
+  let pointerX = 0;
+  let pointerY = 0;
+  let elapsed = 0;
+  let previousTime = 0;
+  let width = 0;
+  let height = 0;
+  let particles = [];
 
   hero.dataset.scene = "fallback";
   canvas.hidden = true;
 
-  if (overviewCard && !reducedMotion && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
-    overviewCard.addEventListener("pointermove", (event) => {
-      const bounds = overviewCard.getBoundingClientRect();
+  const resizeCanvas = () => {
+    if (!context) return;
+    const bounds = hero.getBoundingClientRect();
+    const pixelRatio = Math.min(window.devicePixelRatio || 1, 1.5);
+    width = Math.max(1, bounds.width);
+    height = Math.max(1, bounds.height);
+    canvas.width = Math.round(width * pixelRatio);
+    canvas.height = Math.round(height * pixelRatio);
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+    context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+    particles = Array.from({ length: Math.min(52, Math.round(width / 20)) }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      radius: 0.7 + Math.random() * 1.4,
+      alpha: 0.14 + Math.random() * 0.3,
+      drift: 4 + Math.random() * 10,
+      phase: Math.random() * Math.PI * 2,
+    }));
+    if (!isVisible) drawScene(0);
+  };
+
+  const drawScene = (time) => {
+    if (!context || !width || !height) return;
+
+    const reduced = motionPreference.matches || document.body.classList.contains("reduce-motion");
+    const delta = previousTime ? Math.min((time - previousTime) / 1000, 0.05) : 0;
+    previousTime = time || previousTime;
+    if (!reduced) elapsed += delta;
+
+    const centerX = width * 0.72 + pointerX * 12;
+    const centerY = height * 0.47 + pointerY * 10 + Math.sin(elapsed * 0.7) * 5;
+    const scale = Math.min(width / 900, height / 560, 1.05);
+    const rotate = pointerX * 0.08 + Math.sin(elapsed * 0.24) * 0.035;
+
+    context.clearRect(0, 0, width, height);
+
+    particles.forEach((particle) => {
+      const y = (particle.y + elapsed * particle.drift) % height;
+      context.beginPath();
+      context.arc(particle.x, y, particle.radius, 0, Math.PI * 2);
+      context.fillStyle = `rgba(202, 255, 243, ${particle.alpha})`;
+      context.fill();
+    });
+
+    context.save();
+    context.translate(centerX, centerY);
+    context.rotate(rotate);
+
+    const orbitColors = [
+      "rgba(129, 242, 218, .38)",
+      "rgba(167, 173, 255, .35)",
+      "rgba(114, 202, 239, .22)",
+    ];
+    [1, -1, 1].forEach((direction, index) => {
+      context.save();
+      context.rotate(direction * (0.32 + index * 0.28) + elapsed * (0.08 + index * 0.025));
+      context.scale(1, 0.32 + index * 0.08);
+      context.beginPath();
+      context.ellipse(0, 0, (132 + index * 29) * scale, (132 + index * 29) * scale, 0, 0, Math.PI * 2);
+      context.strokeStyle = orbitColors[index];
+      context.lineWidth = index === 1 ? 1 : 1.4;
+      context.setLineDash(index === 1 ? [3, 8] : []);
+      context.stroke();
+      context.restore();
+    });
+
+    context.scale(scale, scale);
+    context.translate(pointerX * 9, pointerY * 6);
+
+    const heartPath = new Path2D();
+    heartPath.moveTo(0, 74);
+    heartPath.bezierCurveTo(-14, 58, -68, 28, -68, -10);
+    heartPath.bezierCurveTo(-68, -50, -17, -58, 0, -25);
+    heartPath.bezierCurveTo(17, -58, 68, -50, 68, -10);
+    heartPath.bezierCurveTo(68, 28, 14, 58, 0, 74);
+
+    context.save();
+    context.translate(0, 9);
+    context.scale(1.02, 0.96);
+    context.fillStyle = "rgba(4, 26, 40, .42)";
+    context.shadowColor = "rgba(91, 237, 207, .4)";
+    context.shadowBlur = 34;
+    context.fill(heartPath);
+    context.restore();
+
+    context.save();
+    context.translate(0, 7);
+    context.scale(1.015, 0.98);
+    context.fillStyle = "#287d90";
+    context.fill(heartPath);
+    context.restore();
+
+    const heartGradient = context.createLinearGradient(-55, -54, 50, 62);
+    heartGradient.addColorStop(0, "#c3ffe6");
+    heartGradient.addColorStop(0.48, "#74e4d1");
+    heartGradient.addColorStop(1, "#769ef2");
+    context.fillStyle = heartGradient;
+    context.strokeStyle = "rgba(239, 255, 250, .8)";
+    context.lineWidth = 1.6;
+    context.fill(heartPath);
+    context.stroke(heartPath);
+
+    context.beginPath();
+    context.moveTo(-43, 1);
+    context.lineTo(-22, 1);
+    context.lineTo(-12, -17);
+    context.lineTo(1, 23);
+    context.lineTo(14, -4);
+    context.lineTo(39, -4);
+    context.strokeStyle = "rgba(16, 54, 79, .82)";
+    context.lineWidth = 5;
+    context.lineCap = "round";
+    context.lineJoin = "round";
+    context.stroke();
+
+    context.restore();
+
+    const nodes = [
+      [centerX - 136 * scale, centerY - 52 * scale, 4],
+      [centerX + 157 * scale, centerY - 47 * scale, 3.5],
+      [centerX + 132 * scale, centerY + 70 * scale, 4.5],
+      [centerX - 156 * scale, centerY + 60 * scale, 3],
+    ];
+    nodes.forEach(([x, y, radius], index) => {
+      context.beginPath();
+      context.arc(x, y, radius, 0, Math.PI * 2);
+      context.fillStyle = index % 2 ? "#a8b3ff" : "#ffe0a2";
+      context.shadowColor = context.fillStyle;
+      context.shadowBlur = 14;
+      context.fill();
+    });
+    context.shadowBlur = 0;
+  };
+
+  const animate = (time) => {
+    animationFrame = 0;
+    if (!isVisible || document.hidden || !context) return;
+    drawScene(time);
+    animationFrame = window.requestAnimationFrame(animate);
+  };
+
+  const startAnimation = () => {
+    if (isVisible && !document.hidden && !animationFrame && !motionPreference.matches
+      && !document.body.classList.contains("reduce-motion")) {
+      animationFrame = window.requestAnimationFrame(animate);
+    } else if (context && !animationFrame) {
+      drawScene(0);
+    }
+  };
+
+  const stopAnimation = () => {
+    if (animationFrame) window.cancelAnimationFrame(animationFrame);
+    animationFrame = 0;
+    previousTime = 0;
+  };
+
+  const updateMotionPreference = () => {
+    if (motionPreference.matches || document.body.classList.contains("reduce-motion")) {
+      stopAnimation();
+      drawScene(0);
+    } else {
+      startAnimation();
+    }
+  };
+
+  if (card && finePointer.matches) {
+    card.addEventListener("pointermove", (event) => {
+      const bounds = card.getBoundingClientRect();
       const horizontal = (event.clientX - bounds.left) / bounds.width - 0.5;
       const vertical = (event.clientY - bounds.top) / bounds.height - 0.5;
-      overviewCard.style.setProperty("--card-tilt-x", `${(-vertical * 5).toFixed(2)}deg`);
-      overviewCard.style.setProperty("--card-tilt-y", `${(horizontal * 7).toFixed(2)}deg`);
+      card.style.setProperty("--card-tilt-x", `${(-vertical * 5).toFixed(2)}deg`);
+      card.style.setProperty("--card-tilt-y", `${(horizontal * 7).toFixed(2)}deg`);
     }, { passive: true });
-    overviewCard.addEventListener("pointerleave", () => {
-      overviewCard.style.removeProperty("--card-tilt-x");
-      overviewCard.style.removeProperty("--card-tilt-y");
+    card.addEventListener("pointerleave", () => {
+      card.style.removeProperty("--card-tilt-x");
+      card.style.removeProperty("--card-tilt-y");
     });
   }
 
-  if (!reducedMotion && !lowPowerDevice) {
-    let renderer;
-    let scene;
-    let camera;
-    let sculpture;
-    let frameId = 0;
-    let isVisible = false;
-    let pointerX = 0;
-    let pointerY = 0;
-    let currentX = 0;
-    let currentY = 0;
-    let clock;
-
-    const showFallback = (error) => {
-      hero.dataset.scene = "fallback";
-      canvas.hidden = true;
-      renderer?.dispose();
-      renderer = undefined;
-      scene = undefined;
-      camera = undefined;
-      sculpture = undefined;
-      clock = undefined;
-      if (error) console.info("Using the lightweight 3D hero fallback.", error);
-    };
-
-    const stopAnimation = () => {
-      if (!frameId) return;
-      cancelAnimationFrame(frameId);
-      frameId = 0;
-    };
-
-    const resizeScene = () => {
-      if (!renderer || !camera) return;
-      const { width, height } = hero.getBoundingClientRect();
-      if (width < 1 || height < 1) return;
-      renderer.setSize(width, height, false);
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
-    };
-
-    const renderScene = () => {
-      frameId = 0;
-      if (!renderer || !scene || !camera || !isVisible || document.hidden) return;
-
-      const elapsed = clock.getElapsedTime();
-      currentX += (pointerY * 0.16 - currentX) * 0.035;
-      currentY += (pointerX * 0.2 - currentY) * 0.035;
-      sculpture.rotation.x = Math.sin(elapsed * 0.42) * 0.075 + currentX;
-      sculpture.rotation.y = Math.sin(elapsed * 0.3) * 0.16 + currentY;
-      sculpture.rotation.z = Math.sin(elapsed * 0.2) * 0.045;
-      sculpture.position.y = Math.sin(elapsed * 0.7) * 0.09;
-      renderer.render(scene, camera);
-      frameId = requestAnimationFrame(renderScene);
-    };
-
-    const startAnimation = () => {
-      if (isVisible && !document.hidden && !frameId && clock) {
-        clock.start();
-        frameId = requestAnimationFrame(renderScene);
-      }
-    };
-
-    const initializeScene = (THREE) => {
-      const width = hero.clientWidth;
-      const height = hero.clientHeight;
-      if (!width || !height) return;
-
-      scene = new THREE.Scene();
-      camera = new THREE.PerspectiveCamera(35, width / height, 0.1, 100);
-      camera.position.set(0, 0, 11.6);
-
-      renderer = new THREE.WebGLRenderer({
-        canvas,
-        alpha: true,
-        antialias: false,
-        powerPreference: "low-power",
-      });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
-      renderer.setSize(width, height, false);
-      renderer.outputColorSpace = THREE.SRGBColorSpace;
-      renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.2;
-
-      scene.add(new THREE.AmbientLight(0xa7f7e8, 2.1));
-
-      const keyLight = new THREE.PointLight(0x70f0ca, 38, 18);
-      keyLight.position.set(-3.6, 3.4, 5);
-      scene.add(keyLight);
-
-      const rimLight = new THREE.PointLight(0x5a9dff, 32, 16);
-      rimLight.position.set(4, -2, -1);
-      scene.add(rimLight);
-
-      sculpture = new THREE.Group();
-      scene.add(sculpture);
-
-      const heart = new THREE.Shape();
-      heart.moveTo(0, -1.08);
-      heart.bezierCurveTo(-0.25, -0.8, -1.72, 0.03, -1.72, 0.94);
-      heart.bezierCurveTo(-1.72, 2.02, -0.15, 2.07, 0, 1.13);
-      heart.bezierCurveTo(0.15, 2.07, 1.72, 2.02, 1.72, 0.94);
-      heart.bezierCurveTo(1.72, 0.03, 0.25, -0.8, 0, -1.08);
-
-      const heartGeometry = new THREE.ExtrudeGeometry(heart, {
-        depth: 0.48,
-        bevelEnabled: true,
-        bevelSegments: 4,
-        bevelSize: 0.1,
-        bevelThickness: 0.1,
-        curveSegments: 24,
-        steps: 1,
-      });
-      heartGeometry.center();
-
-      const heartMaterial = new THREE.MeshPhysicalMaterial({
-        color: 0x86f0d2,
-        metalness: 0.32,
-        roughness: 0.2,
-        clearcoat: 1,
-        clearcoatRoughness: 0.16,
-        emissive: 0x07534e,
-        emissiveIntensity: 0.3,
-      });
-      const heartMesh = new THREE.Mesh(heartGeometry, heartMaterial);
-      heartMesh.scale.setScalar(0.79);
-      sculpture.add(heartMesh);
-
-      const wireframe = new THREE.Mesh(
-        heartGeometry,
-        new THREE.MeshBasicMaterial({
-          color: 0xe1fff4,
-          wireframe: true,
-          transparent: true,
-          opacity: 0.075,
-        }),
-      );
-      wireframe.scale.copy(heartMesh.scale);
-      wireframe.rotation.copy(heartMesh.rotation);
-      sculpture.add(wireframe);
-
-      const orbitMaterial = new THREE.MeshBasicMaterial({
-        color: 0x83f1dc,
-        transparent: true,
-        opacity: 0.35,
-      });
-      const orbitSpecs = [
-        [2.65, 0.018, 0.76, 0.2, -0.27],
-        [3.08, 0.012, 1.1, -0.43, 0.16],
-        [3.45, 0.01, 0.44, 0.29, 0.38],
-      ];
-      orbitSpecs.forEach(([radius, tube, rotateX, rotateY, rotateZ]) => {
-        const orbit = new THREE.Mesh(
-          new THREE.TorusGeometry(radius, tube, 8, 128),
-          orbitMaterial,
-        );
-        orbit.rotation.set(rotateX, rotateY, rotateZ);
-        sculpture.add(orbit);
-      });
-
-      const nodeMaterial = new THREE.MeshStandardMaterial({
-        color: 0xffdfa0,
-        emissive: 0x8a5420,
-        emissiveIntensity: 0.4,
-        metalness: 0.12,
-        roughness: 0.3,
-      });
-      [
-        [-3.25, 1.45, 0.35, 0.09],
-        [3.15, 1.18, -0.2, 0.065],
-        [2.85, -1.68, 0.4, 0.11],
-        [-2.9, -1.4, -0.3, 0.07],
-      ].forEach(([x, y, z, radius]) => {
-        const node = new THREE.Mesh(
-          new THREE.SphereGeometry(radius, 20, 14),
-          nodeMaterial,
-        );
-        node.position.set(x, y, z);
-        sculpture.add(node);
-      });
-
-      const positions = new Float32Array(360);
-      for (let index = 0; index < positions.length; index += 3) {
-        positions[index] = (Math.random() - 0.5) * 14;
-        positions[index + 1] = (Math.random() - 0.5) * 9;
-        positions[index + 2] = -2 - Math.random() * 5;
-      }
-      const particleGeometry = new THREE.BufferGeometry();
-      particleGeometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-      scene.add(new THREE.Points(
-        particleGeometry,
-        new THREE.PointsMaterial({
-          color: 0xc2fff0,
-          size: 0.018,
-          transparent: true,
-          opacity: 0.45,
-          sizeAttenuation: true,
-        }),
-      ));
-
-      clock = new THREE.Clock();
-      hero.dataset.scene = "ready";
-      canvas.hidden = false;
-      resizeScene();
-      startAnimation();
-    };
-
-    let isLoading = false;
-    const loadScene = async () => {
-      if (isLoading) return;
-      isLoading = true;
-      try {
-        const THREE = await import("https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js");
-        initializeScene(THREE);
-      } catch (error) {
-        showFallback(error);
-      }
-    };
+  if (context && !lowPowerDevice && !window.matchMedia("(max-width: 560px)").matches
+    && !window.matchMedia("(pointer: coarse)").matches) {
+    canvas.hidden = false;
+    hero.dataset.scene = "ready";
+    resizeCanvas();
 
     const observer = new IntersectionObserver((entries) => {
       isVisible = entries.some((entry) => entry.isIntersecting);
-      if (isVisible) {
-        if (!renderer) void loadScene();
-        else startAnimation();
-      } else {
-        stopAnimation();
-      }
-    }, { rootMargin: "280px 0px", threshold: 0 });
-
+      if (isVisible) startAnimation();
+      else stopAnimation();
+    }, { rootMargin: "180px 0px", threshold: 0 });
     observer.observe(hero);
-    window.addEventListener("resize", resizeScene, { passive: true });
-    window.addEventListener("pointermove", (event) => {
+
+    window.addEventListener("resize", resizeCanvas, { passive: true });
+    hero.addEventListener("pointermove", (event) => {
       const bounds = hero.getBoundingClientRect();
-      pointerX = ((event.clientX - bounds.left) / bounds.width - 0.5) * 2;
-      pointerY = ((event.clientY - bounds.top) / bounds.height - 0.5) * 2;
+      pointerX = Math.max(-1, Math.min(1, ((event.clientX - bounds.left) / bounds.width - 0.5) * 2));
+      pointerY = Math.max(-1, Math.min(1, ((event.clientY - bounds.top) / bounds.height - 0.5) * 2));
     }, { passive: true });
+    motionPreference.addEventListener?.("change", updateMotionPreference);
+    const motionObserver = new MutationObserver(updateMotionPreference);
+    motionObserver.observe(document.body, { attributes: true, attributeFilter: ["class"] });
     document.addEventListener("visibilitychange", () => {
       if (document.hidden) stopAnimation();
-      else startAnimation();
+      else updateMotionPreference();
     });
     window.addEventListener("pagehide", () => {
       stopAnimation();
       observer.disconnect();
-      renderer?.dispose();
+      motionObserver.disconnect();
     }, { once: true });
   }
 }

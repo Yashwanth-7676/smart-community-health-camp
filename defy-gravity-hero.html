@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DEFY GRAVITY — 3D Interactive Hero</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Space Grotesk & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;900&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #020617;
+      font-family: 'Inter', sans-serif;
+    }
+    h1 {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    canvas {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+
+  <!-- Import maps for Three.js and Addons -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body class="relative w-screen h-screen select-none bg-slate-950">
+
+  <!-- Deep Elegant Gradient Background -->
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(14,165,233,0.22),rgba(2,6,23,0.98))] pointer-events-none z-0"></div>
+  <div class="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(45,212,191,0.15),transparent_40%)] pointer-events-none z-0"></div>
+
+  <!-- WebGL 3D Canvas -->
+  <div id="canvas-container" class="absolute inset-0 z-10 cursor-grab active:cursor-grabbing"></div>
+
+  <!-- Minimalist Tailwind UI Overlay -->
+  <div class="relative z-20 flex flex-col justify-between items-center w-full h-full p-8 pointer-events-none">
+    
+    <!-- Top Minimal Header -->
+    <header class="w-full max-w-7xl flex justify-between items-center pt-2 pointer-events-auto">
+      <div class="flex items-center gap-3">
+        <span class="w-2.5 h-2.5 rounded-full bg-teal-400 shadow-[0_0_12px_#2dd4bf] animate-pulse"></span>
+        <span class="text-xs uppercase font-mono tracking-widest text-slate-300">Antigravity Physics Lab</span>
+      </div>
+      <nav class="hidden md:flex gap-8 text-xs font-mono tracking-wider text-slate-400 uppercase">
+        <a href="#" class="hover:text-teal-400 transition-colors">Zero-G</a>
+        <a href="#" class="hover:text-teal-400 transition-colors">Collisions</a>
+        <a href="#" class="hover:text-teal-400 transition-colors">Transmission</a>
+      </nav>
+    </header>
+
+    <!-- Center Massive Headline -->
+    <div class="flex flex-col items-center justify-center text-center my-auto">
+      <p class="text-xs md:text-sm font-mono tracking-[0.3em] uppercase text-teal-400/90 mb-4 drop-shadow">
+        Zero Gravity Simulator · Interactive Physical Bodies
+      </p>
+      <h1 class="text-6xl sm:text-8xl md:text-9xl font-black tracking-tighter text-white uppercase mix-blend-difference leading-none">
+        DEFY GRAVITY
+      </h1>
+      <p class="max-w-md mt-6 text-sm md:text-base text-slate-300/80 font-light tracking-wide">
+        Move your cursor to scatter glass spheres, neon rings, and chrome icosahedrons in zero gravity.
+      </p>
+
+      <!-- Sleek Glassmorphic Explore Button -->
+      <div class="mt-10 pointer-events-auto">
+        <button id="exploreBtn" class="group relative px-8 py-3.5 rounded-full overflow-hidden backdrop-blur-xl bg-white/[0.06] border border-white/20 text-white font-medium text-sm tracking-widest uppercase transition-all duration-300 hover:border-teal-400/70 hover:shadow-[0_0_35px_rgba(45,212,191,0.35)] hover:scale-105 active:scale-95">
+          <span class="relative z-10 flex items-center gap-2">
+            Explore Universe
+            <span class="inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
+          </span>
+          <div class="absolute inset-0 bg-gradient-to-r from-teal-500/10 via-sky-500/20 to-teal-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Bottom Minimal Footer Info -->
+    <footer class="w-full max-w-7xl flex justify-between items-center text-xs text-slate-500 font-mono tracking-widest pb-2">
+      <span class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+        60 FPS REAL-TIME PHYSICS
+      </span>
+      <span class="hidden sm:inline">ZERO GRAVITY COLLIDER ENGINE</span>
+      <span>SCATTER ON CURSOR</span>
+    </footer>
+  </div>
+
+  <!-- 3D Zero-G Physical Simulation Script -->
+  <script type="module">
+    import * as THREE from 'three';
+    import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+    // 1. Scene, Camera, Renderer
+    const container = document.getElementById('canvas-container');
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x020617, 0.035);
+
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(0, 0, 13);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.25;
+    container.appendChild(renderer.domElement);
+
+    // 2. Studio Lighting & HDR Environment
+    const environment = new RoomEnvironment();
+    const pmremGenerator = new THREE.PMREMGenerator(renderer);
+    scene.environment = pmremGenerator.fromScene(environment).texture;
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    scene.add(ambientLight);
+
+    const dirLight = new THREE.DirectionalLight(0xffffff, 2.0);
+    dirLight.position.set(10, 15, 10);
+    scene.add(dirLight);
+
+    const pointCyan = new THREE.PointLight(0x38bdf8, 3.5, 30);
+    pointCyan.position.set(-10, -5, -2);
+    scene.add(pointCyan);
+
+    const pointTeal = new THREE.PointLight(0x2dd4bf, 4.0, 30);
+    pointTeal.position.set(10, -5, 4);
+    scene.add(pointTeal);
+
+    // 3. Materials
+    // A. Glass Material (High transmission, low roughness)
+    const glassMaterial = new THREE.MeshPhysicalMaterial({
+      color: 0xe0f7fa,
+      transmission: 0.96,
+      opacity: 1,
+      transparent: true,
+      roughness: 0.05,
+      ior: 1.52,
+      thickness: 1.6,
+      specularIntensity: 1.0,
+      specularColor: 0xffffff,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.1
+    });
+
+    // B. Metallic Chrome Material
+    const metalMaterial = new THREE.MeshStandardMaterial({
+      color: 0x0284c7,
+      metalness: 0.95,
+      roughness: 0.12,
+      envMapIntensity: 2.5
+    });
+
+    // C. Glowing Neon Ring Material
+    const neonMaterial = new THREE.MeshStandardMaterial({
+      color: 0x14b8a6,
+      emissive: 0x2dd4bf,
+      emissiveIntensity: 2.8,
+      roughness: 0.2
+    });
+
+    // Geometries
+    const sphereGeo = new THREE.SphereGeometry(1, 32, 32);
+    const icoGeo = new THREE.IcosahedronGeometry(1.1, 0);
+    const torusGeo = new THREE.TorusGeometry(1.2, 0.2, 24, 48);
+
+    // 4. Physical Zero-Gravity Object Collection (20 Objects)
+    const objects = [];
+    const NUM_OBJECTS = 20;
+
+    for (let i = 0; i < NUM_OBJECTS; i++) {
+      let mesh;
+      const type = i % 3;
+      let radius = 1;
+
+      if (type === 0) {
+        mesh = new THREE.Mesh(sphereGeo, glassMaterial.clone());
+        radius = 1.0;
+      } else if (type === 1) {
+        mesh = new THREE.Mesh(icoGeo, metalMaterial.clone());
+        radius = 1.1;
+      } else {
+        mesh = new THREE.Mesh(torusGeo, neonMaterial.clone());
+        radius = 1.25;
+      }
+
+      const scale = 0.6 + Math.random() * 0.55;
+      mesh.scale.setScalar(scale);
+
+      // Random starting positions spread in 3D volume
+      mesh.position.set(
+        (Math.random() - 0.5) * 14,
+        (Math.random() - 0.5) * 8,
+        (Math.random() - 0.5) * 5
+      );
+
+      scene.add(mesh);
+
+      // Physics State: Zero gravity drift velocities
+      objects.push({
+        mesh,
+        radius: radius * scale,
+        velocity: new THREE.Vector3(
+          (Math.random() - 0.5) * 0.015,
+          (Math.random() - 0.5) * 0.015,
+          (Math.random() - 0.5) * 0.015
+        ),
+        rotationSpeed: new THREE.Vector3(
+          (Math.random() - 0.5) * 0.012,
+          (Math.random() - 0.5) * 0.012,
+          (Math.random() - 0.5) * 0.012
+        ),
+        baseScale: scale
+      });
+    }
+
+    // 5. Mouse Repulsion & Parallax Tracking
+    const mouse = { x: 0, y: 0, targetX: 0, targetY: 0 };
+    const raycaster = new THREE.Raycaster();
+    const mouse3D = new THREE.Vector3(0, 0, 0);
+    const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+
+    window.addEventListener('mousemove', (e) => {
+      mouse.targetX = (e.clientX / window.innerWidth) * 2 - 1;
+      mouse.targetY = -(e.clientY / window.innerHeight) * 2 + 1;
+
+      // Project mouse coordinates to 3D world plane at z = 0
+      raycaster.setFromCamera({ x: mouse.targetX, y: mouse.targetY }, camera);
+      raycaster.ray.intersectPlane(plane, mouse3D);
+    });
+
+    // 6. Physics Simulation Loop with Soft Collisions & Boundaries
+    const clock = new THREE.Clock();
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      // Smooth Mouse Lerp
+      mouse.x += (mouse.targetX - mouse.x) * 0.05;
+      mouse.y += (mouse.targetY - mouse.y) * 0.05;
+
+      // Parallax Camera movement
+      camera.position.x = mouse.x * 1.5;
+      camera.position.y = mouse.y * 1.2;
+      camera.lookAt(0, 0, 0);
+
+      // Boundary confines
+      const boundX = 8.5;
+      const boundY = 5.2;
+      const boundZ = 3.5;
+
+      // Update zero-g physics for all objects
+      for (let i = 0; i < objects.length; i++) {
+        const obj = objects[i];
+
+        // Constant Slow Rotation
+        obj.mesh.rotation.x += obj.rotationSpeed.x;
+        obj.mesh.rotation.y += obj.rotationSpeed.y;
+        obj.mesh.rotation.z += obj.rotationSpeed.z;
+
+        // Apply Drift Velocity
+        obj.mesh.position.add(obj.velocity);
+
+        // Soft Damping
+        obj.velocity.multiplyScalar(0.995);
+
+        // Keep a minimum gentle drift
+        if (obj.velocity.length() < 0.004) {
+          obj.velocity.add(new THREE.Vector3(
+            (Math.random() - 0.5) * 0.002,
+            (Math.random() - 0.5) * 0.002,
+            (Math.random() - 0.5) * 0.002
+          ));
+        }
+
+        // Mouse Repulsion Impulse
+        const distToMouse = obj.mesh.position.distanceTo(mouse3D);
+        const repulsionRadius = 4.2;
+        if (distToMouse < repulsionRadius) {
+          const repelDir = new THREE.Vector3().subVectors(obj.mesh.position, mouse3D).normalize();
+          const force = (1 - distToMouse / repulsionRadius) * 0.035;
+          obj.velocity.add(repelDir.multiplyScalar(force));
+        }
+
+        // Soft Sphere-to-Sphere Collision Resolution
+        for (let j = i + 1; j < objects.length; j++) {
+          const other = objects[j];
+          const diff = new THREE.Vector3().subVectors(obj.mesh.position, other.mesh.position);
+          const dist = diff.length();
+          const minDist = obj.radius + other.radius;
+
+          if (dist < minDist && dist > 0.0001) {
+            const normal = diff.normalize();
+            const overlap = (minDist - dist) * 0.5;
+
+            // Separate bodies
+            obj.mesh.position.addScaledVector(normal, overlap);
+            other.mesh.position.addScaledVector(normal, -overlap);
+
+            // Elastic bounce velocity exchange
+            const relativeVelocity = new THREE.Vector3().subVectors(obj.velocity, other.velocity);
+            const impulse = relativeVelocity.dot(normal);
+
+            if (impulse < 0) {
+              const impulseVector = normal.clone().multiplyScalar(impulse * 0.85);
+              obj.velocity.sub(impulseVector);
+              other.velocity.add(impulseVector);
+            }
+          }
+        }
+
+        // Boundary Soft Rebound
+        if (Math.abs(obj.mesh.position.x) > boundX) {
+          obj.velocity.x *= -0.7;
+          obj.mesh.position.x = Math.sign(obj.mesh.position.x) * boundX;
+        }
+        if (Math.abs(obj.mesh.position.y) > boundY) {
+          obj.velocity.y *= -0.7;
+          obj.mesh.position.y = Math.sign(obj.mesh.position.y) * boundY;
+        }
+        if (Math.abs(obj.mesh.position.z) > boundZ) {
+          obj.velocity.z *= -0.7;
+          obj.mesh.position.z = Math.sign(obj.mesh.position.z) * boundZ;
+        }
+      }
+
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    // 7. Responsive Viewport Resize
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    });
+
+    // Interactive button blast
+    document.getElementById('exploreBtn')?.addEventListener('click', () => {
+      objects.forEach(obj => {
+        obj.velocity.add(new THREE.Vector3(
+          (Math.random() - 0.5) * 0.15,
+          (Math.random() - 0.5) * 0.15,
+          (Math.random() - 0.5) * 0.15
+        ));
+      });
+    });
+  </script>
+</body>
+</html>
